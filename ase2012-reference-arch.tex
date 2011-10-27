@@ -1,0 +1,86 @@
+% vim: tw=78 encoding=utf8 ts=2 sw=2 expandtab softtabstop=2
+\documentclass[12pt,a4paper,english]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{babel}
+\usepackage{url}
+\usepackage{graphicx}
+
+\title{
+Title}
+\author{Rodrigo Souza \\ rodrigorgs@gmail.com 
+\and Dalton Guerrero \\ dalton@dsc.ufcg.edu.br
+\and Jorge Figueiredo \\ abrantes@dsc.ufcg.edu.br
+\and Christina Chavez \\ flach@ufba.br
+}
+
+\begin{document}
+
+\sloppy
+\maketitle
+
+\begin{abstract}
+	As a software system evolves, its actual architecture may deviate from its original reference architecture. A better understanding of the actual architecture can be gained by applying architecture recovery algorithms to the source code of the system. Unfortunately, there is little knowledge regarding the quality of such algorithms, mostly because, in order to assess their accuracy, one needs updated, detailed architectures for a variety of software systems.
+	To overcome such problem, we propose a simulation model that synthesizes implementation-level dependency graphs that conform to the module view of any given reference architecture. We show, using observations from network theory, that the graphs are very similar to dependency graphs extracted from the source code of real software systems. 
+	Then, we synthesize thousands of graphs, in a controlled way, and use them as benchmarks for six well-known architecture recovery algorithms: ACDC, Bunch, SL75, SL90, CL75, and CL90. By comparing the given reference architectures with those recovered by the algorithms, we conclude that ACDC and Bunch outperform the alternatives, specially if the architecture contains more than a couple of modules.\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{section}{Introduction}
+	Architectural drift
+
+	Reverse engineering / Architecture recovery algorithms
+	
+\end{section}
+
+\begin{section}{Background}
+	Architecture recovery algorithms
+
+	Evaluation of architecture recovery algorithms. 
+	
+\end{section}
+
+\begin{section}{The BCR+ model}
+	Network theory / complex networks / scale-free networks
+	
+	BCR+ description \cite{Bollobas2003}
+\end{section}
+
+
+\begin{section}{Software-Realism (aka “softwareness”)}
+	Motifs / Triads. Triad concentration profiles.
+
+	Software-realism metric.
+
+	Software-realism classifier. Training and testing the classifier.
+
+	Software-realism for the BCR+ model. (Cite previous paper, where we also evaluate software-realism for three other models)
+\end{section}
+
+\begin{section}{Evaluation of Architecture Recovery Algorithms}
+	Traditional experimental setup for evaluation of architecture recovery algorithms: given a dependency graph and a reference architecture, run the algorithm on the graph and compare the recovered architecture with the reference architecture.
+	
+	MoJo metric.
+	
+\end{section}
+
+\begin{section}{Other Possible Sections}
+	Discussion
+	
+	Limitations
+	
+	Conclusion
+	
+	Acknowledgments
+	
+	References	
+\end{section}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{plain}
+\bibliography{ase2012-reference-arch}
+
+\end{document}
