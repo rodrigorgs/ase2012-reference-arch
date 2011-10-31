@@ -162,7 +162,7 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{section}{Software-Realism (aka “softwareness”)}
+\begin{section}{Software-Realism}
 	% Motifs / Triads. Triad concentration profiles.
 	% Software-realism metric.
 	% Software-realism classifier. Training and testing the classifier.
@@ -175,7 +175,31 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 	First, we define a metric for software-realism, based on structural properties of a graph. Then, we show that the metric is consistent, by applying both to software dependency graphs and to graphs from non-software domains. Finally, we show that the BCR+ model is capable of synthesizing graphs with a high degree of software-realism.
 	
 \begin{subsection}{Background}
-	\TODO Write about triad concentration profiles \cite{Milo2002}
+
+	Given three vertices, one can conceive 13 distinct connected directed graphs---the so-called triads---, as shown in Figure \ref{fig:triads}. By counting how often each triad appears in a graph, one can build a vector, called triad concentration profile, that summarizes any graph in a compact, fixed-size way.
+
+	\begin{figure*}[htbp]
+		\centering
+			\includegraphics[scale=1]{figures/triads}
+		\caption{All triads---connected directed graphs with three vertices---, numbered from 1 to 13.}
+		\label{fig:triads}
+	\end{figure*}
+	
+	Previous work has shown that graphs from the same domain tend to be caracterized by similar triad concentration profiles \cite{Milo2002}. For example, Figure \ref{fig:triads}(a) presents triad concentration profiles for two software dependency graphs, whereas Figure \ref{fig:triads}(b) presents triad concentration profiles for graphs in distinct domains: a software dependency graph and a linguistic graph. An informal analysis reveals that the similarity between the profiles is greater in the first case. It should suffice to notice that, in the second case, the concentration of the first two triads is somewhat reversed (in the linguistic graph, the second triad is the most frequent).
+
+	\begin{figure*}[htbp]
+		\centering
+			\includegraphics[scale=1]{figures/tcp}
+		\caption{Comparison between triad concentration profiles for three distinct graphs (computed with the igraph tool \cite{igraph}). (a) Class dependency graphs for two softwares: JabRef, version 2.5b2 (left) and ArgoUML version 0.28 (right). (b) Graph for JabRef, version 2.5b2 (left), and graph of word succession in a sample of Japanese texts (right) \cite{Milo2004}.}
+		\label{fig:tcp}
+	\end{figure*}
+	
+	Previous works \cite{Milo2004,Ma2007,Lin2008} have explored the use of Pearson's correlation coefficient on triad concentration profiles in order to find clusters of structurally similar graphs. The results suggest that the technique is effective in identifying groups of graphs from the same domain (e.g., social, linguistic, biologic etc.).
+			
+	\end{subsection}
+	
+\begin{subsection}{Software-Realism Metric}
+	
 	
 	\TODO Similarity between graphs:
 	
@@ -183,11 +207,9 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
   \mathrm{sim}(a, b) ~=~ 
     \mathrm{cor}(\mathrm{PCT}(a), \mathrm{PCT}(b))\mathrm{.}
   $$
-		
-	\end{subsection}
 	
-\begin{subsection}{Software-Realism Metric}
-	\TODO: Software-realism metric:
+	
+	\TODO Software-realism metric:
 	
 	$$
   \mathrm{S}(x, R) ~=~ \frac{
