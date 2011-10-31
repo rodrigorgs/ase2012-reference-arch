@@ -89,19 +89,30 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 	
 	The original model by Bollobás et al \cite{Bollobas2003} is a particular case of BCR+ when $\mu = 0$ and $G$ contains one single vertex, representing one single module.
 	
-	\TODO Add here Figure 3.1 from dissertation, that displays the initial graph.
+
+\begin{figure*}[htbp]
+	\centering
+		\includegraphics[scale=1]{figures/bcr-initial-graph}
+	\caption{Initial graph synthesized by BCR+, given an input graph parameter $G$.}
+	\label{fig:bcr-initial-graph}
+\end{figure*}
 	
-	As a computer model, BCR+ takes the parameters as inputs and, by running an algorithm, outputs a graph. The algorithm builds the output graph incrementally. It starts by creating a module for each vertex in the input graph $G$, and then adding one vertex to each module. After that, it creates all external edges that are allowed by $G$ (see Figure NNN). Then, the graph is modified according to three formation rules that are applied successively, in random order, until the graph grows to $n$ vertices. At each algorithm step, the probability of the $i$-th being applied is given by the parameter $p_i$.
+	As a computer model, BCR+ takes the parameters as inputs and, by running an algorithm, outputs a graph. The algorithm builds the output graph incrementally. It starts by creating a module for each vertex in the input graph $G$, and then adding one vertex to each module. After that, it creates all external edges that are allowed by $G$ (see Figure \ref{fig:bcr-initial-graph}). Then, the graph is modified according to three formation rules that are applied successively, in random order, until the graph grows to $n$ vertices. At each algorithm step, the probability of the $i$-th being applied is given by the parameter $p_i$.
 
 \end{subsection}	
 
 \begin{subsection}{Formation Rules}
 	
 	There are three formation rules in BCR+. Each one modifies the output graph by adding or removing vertices or edges in the graph. Also, each formation rule has a probability of being applied, given by the parameters $p_1$, $p_2$ and $p_3$.
-	
-	\TODO Figure with formation rules (Figure 3.2 from dissertation)
-	
-	The rules are illustrated in Figure NNN. Simplified rules:
+
+\begin{figure*}[htbp]
+	\centering
+		\includegraphics[scale=1]{figures/bcr-rules}
+	\caption{Formation rules for BCR+. $M_i$ and $M_j$ are distinct modules, such as $M_i$ depends on $M_j$. In the diagram for each rule, thicker lines represent vertices and edges created when the rule is applied.}
+	\label{fig:bcr-rules}
+\end{figure*}
+
+	The rules are illustrated in Figure \ref{fig:bcr-rules}. Simplified rules:
 	
 	\begin{itemize}
 		\item Rule 1: one vertex is added to some module, together with an outgoing edge to another vertex in the same module.
@@ -133,11 +144,11 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 
 		\item Rule 3: \emph{Add an edge between pre-existing vertices}. A vertex, $v$, is chosen according to $\mathrm{f}(x) = \dout + \gout(x)$. Then, an edge is added from $v$ to another vertex, $w$, chosen according to $\mathrm{f}(x) = \din + \gin(x)$. The vertex $w$ is not chosen among the set of all vertices. In fact, there are two rules, and the choice of the rule to apply is probabilistic and depends on the parameter $\mu$:
 
-		\begin{enumerate}
+		\begin{itemize}
 		  \item Rule 3a: with proability $\mu$, $w$ is chosen among the vertices that are in modules on which the module of $v$ depends, according to the parameter $G$.
 		  \item Rule 3b: with probability $1 - \mu$, $w$ is chosen among the vertices that are in the same module as $v$.
-		\end{enumerate}
-	\end{enumerate}
+		\end{itemize}
+	\end{itemize}
 	
 	\TODO BCR+ is a growth model, can simulate the evolution of a software system subject to constraints in module interaction. See CSMR paper (extended version), pg 2, col 2, just before section B. 
 	
