@@ -248,12 +248,53 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{section}{Evaluation of Architecture Recovery Algorithms}
-	\TODO Traditional experimental setup for evaluation of architecture recovery algorithms: given a dependency graph and a reference architecture, run the algorithm on the graph and compare the recovered architecture with the reference architecture.
-	\TODO MoJo metric.
+	\TODO Clustering
+
+	\TODO Brief description about Bunch, ACDC, SL75/SL90, CL75, CL90
 	
-	\TODO Experiment 1: comparison between arch recovery algorithms
-	\TODO Experiment 2: analysis of parameters
-	\TODO Experiment 3: two-way vs. one-way dependencies
+	\TODO Traditional experimental setup for evaluation of architecture recovery algorithms: given a dependency graph and a reference architecture, run the algorithm on the graph and compare the recovered architecture with the reference architecture.
+	
+	\TODO MoJo metric.
+
+\begin{subsection}{Experimental Setup}
+	\TODO Section 6.3 from dissertation
+\end{subsection}
+
+\begin{subsection}{Comparison of Architecture Recovery Algorithms}
+	% Section 6.4 from dissertation
+	
+	The first experiment was aimed at comparing the performance of the algorithms when applied software-realistic graphs, measured by the similarity between the clusters found by the algorithms and the modules of the reference architecture.
+	
+	We have selected for this experiment only the graphs that were classified as software-realistic, totalizing about 6,000 graphs. Then, each algorithm was applied to each one of the synthetic graphs, resulting in a set of clusters together with a mapping from the set of vertices to the set of clusters. The performance of the clusterings were measured with the metric MoJoSim.
+	
+	The Figure NNN shows a boxplot of the MoJoSim values that were measured for each algorithm. The dashed lines indicate the maximum and minimum value from the data. Comparing the median performance of the algorithms, it is clear that ACDC presents the best performance, followed by Bunch, and then by the hierachical algorithms. These differences were verified to be significative by applying a paired Wilcoxon test ($\alpha = 0.05$), with Bonferroni correction to account for multiple hypothesis testing. Among the hierarchical algorithms, there was no evidence that their performances differ.
+	
+	\TODO Figure (boxplot)
+	
+	Another noteworthy aspect of the data is the dispersion of values. The algorithm Bunch presents the smaller dispersion, with more that half of the values between 0.60 and 0.80 (minimum value = 0.45). In the case of ACDC, half of the values are between 0.65 a 0.85, but the minimum value is 0.01. This observation suggests that, although Bunch presents overall inferior performance when compared with ACDC, it can be a resonable choice for yielding more predictable results.
+	
+	\TODO move to a discussion section.
+	The results disagree with conclusions from Wu, Hassah, and Holt \cite{Wu2005}. They have concluded that the SL algorithms outperform ACDC, which outperforms Bunch, which outperforms the CL algorithms. The disagreement probably can be explained by the criteria they used to build the reference architecture for each software system. They use the folder structure from the source of the software system to determine the modules in the architecture reference. In our work, the reference architecture is defined a priori, and the graphs are synthesized ro reduce the dependencies between modules.
+	
+	We should note that this experiment suffers from sampling bias. Although all analyzeds graphs are software-realistic, we can not guarantee that it is representative of all software systems. We see this analysis as complementary to similar experiments, that suffer from other types of bias \cite{Wu2005,Bittencourt2009,Andritsos2005}.
+	
+\end{subsection}	
+
+\begin{subsection}{Algorithm Parameters Analysis}
+	\TODO Section 6.5 from dissertation
+	
+	In the next experiment, we tried to understand how the algorithms behave on a variety of situations---graphs with different number of modules, different proportions of external edges etc. We were able to control a number of graph properties by changing parameter values for the BCR+ model.
+	
+	In this experiment, all graphs---both software-realistic and non software-realistic---were considered, in order to avoid the software-realism variable to bias the results.
+	
+	
+	
+\end{subsection}
+
+\begin{subsection}{Impact of Bidirectional Dependencies}
+	\TODO Section 6.6 from dissertation
+\end{subsection}
+
 \end{section}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
