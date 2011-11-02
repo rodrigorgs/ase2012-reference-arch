@@ -267,9 +267,14 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 	
 	We have selected for this experiment only the graphs that were classified as software-realistic, totalizing about 6,000 graphs. Then, each algorithm was applied to each one of the synthetic graphs, resulting in a set of clusters together with a mapping from the set of vertices to the set of clusters. The performance of the clusterings were measured with the metric MoJoSim.
 	
-	The Figure NNN shows a boxplot of the MoJoSim values that were measured for each algorithm. The dashed lines indicate the maximum and minimum value from the data. Comparing the median performance of the algorithms, it is clear that ACDC presents the best performance, followed by Bunch, and then by the hierachical algorithms. These differences were verified to be significative by applying a paired Wilcoxon test ($\alpha = 0.05$), with Bonferroni correction to account for multiple hypothesis testing. Among the hierarchical algorithms, there was no evidence that their performances differ.
+	The Figure \ref{fig:exp-algorithms} shows a boxplot of the MoJoSim values that were measured for each algorithm. The dashed lines indicate the maximum and minimum value from the data. Comparing the median performance of the algorithms, it is clear that ACDC presents the best performance, followed by Bunch, and then by the hierachical algorithms. These differences were verified to be significative by applying a paired Wilcoxon test ($\alpha = 0.05$), with Bonferroni correction to account for multiple hypothesis testing. Among the hierarchical algorithms, there was no evidence that their performances differ.
 	
-	\TODO Figure (boxplot)
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[scale=0.5]{figures/exp-algorithms}
+		\caption{Statistical summary of MoJoSim values for each architecture recovery algorithm.}
+		\label{fig:exp-algorithms}
+	\end{figure}
 	
 	Another noteworthy aspect of the data is the dispersion of values. The algorithm Bunch presents the smaller dispersion, with more that half of the values between 0.60 and 0.80 (minimum value = 0.45). In the case of ACDC, half of the values are between 0.65 a 0.85, but the minimum value is 0.01. This observation suggests that, although Bunch presents overall inferior performance when compared with ACDC, it can be a resonable choice for yielding more predictable results.
 	
@@ -281,18 +286,85 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 \end{subsection}	
 
 \begin{subsection}{Algorithm Parameters Analysis}
-	\TODO Section 6.5 from dissertation
+	% Section 6.5 from dissertation
 	
 	In the next experiment, we tried to understand how the algorithms behave on a variety of situations---graphs with different number of modules, different proportions of external edges etc. We were able to control a number of graph properties by changing parameter values for the BCR+ model.
 	
 	In this experiment, all graphs---both software-realistic and non software-realistic---were considered, in order to avoid the software-realism variable to bias the results.
 	
+	We have analyzed the influence of the number of modules and of the proportion of external edges on the performance of the algorithms. We have chosen these two properties because they map naturally to BCR+ parameters: number of modules is controlled by the input module graph, $G$, and proportion of external edges is controlled by the parameter $\mu$.
+
+	\TODO explain that the sample is paired, that is, there are two graphs that differ only by $\mu$ (the other parameters are identical).
 	
+	\TODO this experiment is not possible with traditional approaches, since it depends on having control on the graphs properties.
+	
+	As expected, all algorithms performed better when the proportion of external edges was smaller. \TODO is it true? Check experimental package
+	
+	A surprising result was found when analyzing the influence of the number of modules on the performance of the algorithms (see Figure \ref{fig:exp-number-modules}). While the performance of ACDC and Bunch are not influenced by the number of modules, the performance of the hierachical algorithms is worse when applied to graphs with more modules. In fact, the performance of such algorithms are comparable to the performance of ACDC and Bunch when there are only two modules, but it gets  progressively worse as the number of modules grows.
+	
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[scale=0.5]{figures/exp-number-modules}
+		\caption{Influence of the number of modules in the reference architecture on the performance of each architecture recovery algorithm.}
+		\label{fig:exp-number-modules}
+	\end{figure}
+	
+	A possible explanation for this phenomenom can be found in the distribution of module sizes found by hierarchical algorithms. It is common that they found large modules, sometimes covering more than half of the vertices \cite{Wu2005}. If the reference architecture contains many smaller modules, large modules found by an algorithm are severely penalyzed by the MoJoSim metric (the large modules need to be split in smaller modules, which is accounted in MoJoSim as a sequence of vertex movimentations).
 	
 \end{subsection}
 
 \begin{subsection}{Impact of Bidirectional Dependencies}
-	\TODO Section 6.6 from dissertation
+	% Section 6.6 from dissertation
+	
+	The third experiment was aimed at measuring the influence of the type of dependency (unidirectional of bidirectional) on the performance of each architecture recovery algorithm. The independent variable is the parameter $G$ from BCR+, that is, the definition of the modules and allowed dependencies between modules.
+	
+	We have analyzed two configurations for $G$:
+	
+	\begin{itemize}
+		\item \emph{bidirectional}: $G$ contains two modules, $M_1$ and $M_2$; there is a bidirectional edge between $M_1$ and $M_2$ (that is, vertices in $M_1$ may depend on vertices of $M_2$ and the other way around);
+		
+		\item \emph{unidirectional}: $G$ contains two modules, $M_1$ and $M_2$; there is an unidirectional edge from $M_1$ to $M_2$ (that is, vertices in $M_1$ may depend on vertices of $M_2$, but the opposite is not true).
+	\end{itemize}
+	
+	As far as we know, BCR+ is the only graph model that can be used to conduct this type of experiment. Other graph models do not offer control over specific dependencies.
+	
+	For the remaining parameters of BCR+, when considered the values described in Section XXX. For each configuration of parameters, three graphs were synthesized, totalizing 11,400 graphs. Then, each architecure recovery algorithm was applied to each graph. Finally, the performance was computed, using the metric MoJoSim.
+	
+	The results are shown in a boxplot in Figure \ref{fig:exp-dependencies}. It can be observed that all algorithms performed slightly better on the graph with the unidirectional edge. All differences---except that of CL75---are significative at 5\% level, as assessed with the paired Wilcoxon test.
+	
+	\begin{figure*}[htbp]
+		\centering
+			\includegraphics[scale=1]{figures/exp-dependencies}
+		\caption{Influence of the type of dependency between modules (unidirectional ou bidirectional) on the performance of each architecture recovery algorithm.}
+		\label{fig:exp-dependencies}
+	\end{figure*}
+	
+	The difference of performance for each algorithm is shown in Table \ref{tab:exp-dependencies}, as a 95\% confidence interval. ACDC and SL75 are more influenced by the choice of dependency type than the other algorithms. Overall, the difference between MoJoSim values does not exceed 0.03 (except in the case of SL90), which is a small value.
+	
+	\begin{table*}[width=\textwidth]
+	  \begin{center}
+	  \begin{tabular}{cccccc}
+	    \hline
+	    \textbf{ACDC} & \textbf{Bunch} & \textbf{CL75} & \textbf{CL90} & \textbf{SL75} & \textbf{SL90} \\
+	    \hline
+	    \hline
+	    \footnotesize{[0,016; 0,023]} & \footnotesize{[0,004; 0,008]} & \footnotesize{[-0,004; 0,006]} & \footnotesize{[0,006; 0,015]} & \footnotesize{[0,007; 0,017]} & \footnotesize{[0,021; 0,031]} \\
+	    \hline
+	  \end{tabular}
+	  \end{center}
+	  \caption{Intervalo de confiança de 95\% para a diferença de desempenho de cada algoritmo, medido em MoJoSim, entre a configuração \emph{simples} e a configuração \emph{dupla} do parâmetro G.}
+	  \label{tab:exp-dependencies}
+	\end{table*}
+	
+	We conclude that, in general, the presence of modules with mutual, bidirectional dependencies, influences negatively the performance of the algorithms that were analyzed. The observed difference was small in our study with two modules, but we suspect that this difference can be greater on graphs with more modules and more bidirectional dependencies.
+	
+\end{subsection}
+
+\begin{subsection}{Discussion}
+	We have described three experiments based on the application of architecture recovery algorithms to synthetic graphs created by the model BCR+. The experiments present evidence that this approach is practicable and can be used to find insights about the algorithms that cannot be found with more traditional approaches.
+	
+	\TODO more
+	
 \end{subsection}
 
 \end{section}
