@@ -23,6 +23,10 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 \sloppy
 \maketitle
 
+\TODO Redo some figures to fit better in a two column paper.
+
+\TODO Display authors in a 2x2 matrix.
+
 \begin{abstract}
 	As a software system evolves, its actual architecture may deviate from its original reference architecture. A better understanding of the actual architecture can be gained by applying architecture recovery algorithms to the source code of the system. Unfortunately, there is little knowledge regarding the quality of such algorithms, mostly because, in order to assess their accuracy, one needs updated, detailed architectures for a variety of software systems.
 	To overcome such problem, we propose a simulation model that synthesizes implementation-level dependency graphs that conform to the module view of any given reference architecture. We show, using observations from network theory, that the graphs are very similar to dependency graphs extracted from the source code of real software systems. 
@@ -168,15 +172,35 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 	% Software-realism classifier. Training and testing the classifier.
 	% Software-realism for the BCR+ model. (Cite previous paper, where we also evaluate software-realism for three other models)
 	
-	If synthetic graphs are to be used as surrogates to dependency graphs extracted from the source code of software systems, it is expected that they resemble such graphs. To capture this software quality of a graph, we define the concept of software-realism, that indicates to what extent a graph resembles software dependency graphs.
+	If synthetic graphs built with BCR+ are to be used as surrogates to dependency graphs extracted from the source code of software systems, it is expected that they resemble such graphs. The property of a graph to resemble software dependency graphs is what we call software-realism. Hence, we seek to prove that BCR+ produces software-realistic graphs.
 	
-	A metric for software-realism should be consistent, that is, it should present high values when measuring dependency graphs, and low values when measuring graphs from other domains---e.g., protein interaction networks, social networks etc.
+	\TODO Maybe, redo the analysis using neural networks and eliminate the need of a software-realism metric. (Or, maybe, a linear regression with up to quadratic terms is enough. Try both.)
 	
-	First, we define a metric for software-realism, based on structural properties of a graph. Then, we show that the metric is consistent, by applying both to software dependency graphs and to graphs from non-software domains. Finally, we show that the BCR+ model is capable of synthesizing graphs with a high degree of software-realism.
+	To this end, we propose a classifier---based on a software-realism metric---that, given a graph, outputs whether it is software-realistic or not. Then, we show that this classifier accurately classifies a data set consisting of both software-realistic graphs (extracted from open source software systems) and non software-realistic graphs (extracted from data studied in other domains). Finally we show that, with a suitable configuration of parameters, BCR+ can be used to synthesize software-realistic graphs.
 	
-\begin{subsection}{Background}
+	% In fact, we expect synthetic graphs to be indistinguishable from dependency graphs in all aspects that are relevant for graph-based architecture recovery algorithms. For this purpose, we chose to devise a classifier that distinguishes software dependency graphs from other graphs.
+	
+	% To capture this software quality of a graph, we define the concept of software-realism, that indicates to what extent a graph resembles software dependency graphs.
+	
+	% A metric for software-realism should be consistent, that is, it should present high values when measuring dependency graphs, and low values when measuring graphs from other domains---e.g., protein interaction networks, social networks etc.
+	
+	% First, we define a metric for software-realism, based on structural properties of a graph. Then, we show that the metric is consistent, by applying it to both software dependency graphs and graphs from non-software domains. After that, we build a classifier, based on the software-realism metric, that can be used to distinguish software dependency graphs from other graphs. Finally, we show that the BCR+ model is capable of synthesizing graphs with a high degree of software-realism, indistinguishable from software dependency networks.
 
-	Given three vertices, one can conceive 13 distinct connected directed graphs---the so-called triads---, as shown in Figure \ref{fig:triads}. By counting how often each triad appears in a graph, one can build a vector, called triad concentration profile, that summarizes any graph in a compact, fixed-size way.
+\begin{subsection}{Data Set}
+	\TODO Where to put this section?
+	
+	\begin{enumerate}
+		\item Data collection: graphs and software systems
+		\item Data preprocessing: extraction of software dependency graphs
+		\item Data analysis: training and testing of the neural network
+		\item Finally: classification of graphs synthesized by BCR+.
+	\end{enumerate}
+	
+\end{subsection}
+
+\begin{subsection}{Triad Concentration Profiles}
+	
+	Before presenting the graph classifier, we introduce the concept of triads and triad concentration profiles. Given three vertices, one can conceive 13 distinct connected directed graphs---the so-called triads---, as shown in Figure \ref{fig:triads}. By counting how often each triad appears in a graph, one can build a 13-dimension vector that is called triad concentration profile. % it's like the signature for a graph.
 
 	\begin{figure*}[htbp]
 		\centering
@@ -194,23 +218,24 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 		\label{fig:tcp}
 	\end{figure*}
 	
-	Previous works \cite{Milo2004,Ma2007,Lin2008} have explored the use of Pearson's correlation coefficient on triad concentration profiles in order to find clusters of structurally similar graphs. The results suggest that the technique is effective in identifying groups of graphs from the same domain (e.g., social, linguistic, biologic etc.).
+	Many authors \cite{Milo2004,Ma2007,Lin2008} have explored the use of Pearson's correlation coefficient on triad concentration profiles in order to find clusters of structurally similar graphs. The results suggest that the technique is effective in identifying groups of graphs from the same domain (e.g., social, linguistic, biologic etc.).
 			
 	\end{subsection}
 	
 \begin{subsection}{Software-Realism Metric}
-	
-	
-	\TODO Similarity between graphs:
+%	Based on triad concentration profiles, we define the software-realism metric, that is fundamental to the graph classifier.
+
+	We define the similarity between two graphs to be the correlation between the corresponding triad concentration profiles:
 	
 	$$
   \mathrm{sim}(a, b) ~=~ 
     \mathrm{cor}(\mathrm{PCT}(a), \mathrm{PCT}(b))\mathrm{.}
   $$
 	
+	\TODO I could have just trained a neural network with our extended training set (software graphs + graphs from other domains).
 	
-	\TODO Software-realism metric:
-	
+	To define a software-realism of a graph, $x$, we rely on the similarity metric and on a data set, $R$, containing graphs that are considered software-realistic. The software-realism, $\mathrm{S}(x, R)$, is defined as the average similarity between $x$ and each of the graphs in the reference data set, $R$:
+		
 	$$
   \mathrm{S}(x, R) ~=~ \frac{
   \displaystyle\sum_{s \in R} \mathrm{sim}(x, s)
