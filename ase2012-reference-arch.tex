@@ -27,6 +27,8 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 
 \TODO Display authors in a 2x2 matrix.
 
+% TODO entrada do BCR+ é uma arquitetura de referência.
+
 \begin{abstract}
 	As a software system evolves, its actual architecture may deviate from its original reference architecture. A better understanding of the actual architecture can be gained by applying architecture recovery algorithms to the source code of the system. Unfortunately, there is little knowledge regarding the quality of such algorithms, mostly because, in order to assess their accuracy, one needs updated, detailed architectures for a variety of software systems.
 	To overcome such problem, we propose a simulation model that synthesizes implementation-level dependency graphs that conform to the module view of any given reference architecture. We show, using observations from network theory, that the graphs are very similar to dependency graphs extracted from the source code of real software systems. 
@@ -61,7 +63,8 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 	\newcommand{\gin}[0]{\ensuremath{\mathrm{g}_{in}}}
 	\newcommand{\gout}[0]{\ensuremath{\mathrm{g}_{out}}}
 	
-	\TODO Talk about network theory / complex networks / scale-free networks	
+	\TODO Talk about network theory / complex networks / scale-free networks 
+  %TODO Chris:	mv to background
 
 	When designing the architecture of a software system, the module viewpoint plays a major role, by specifying the modules of the system and their inter-relationships. Constraining such dependencies benefits the maintenatibility, portability, and reusability of the software system.
 	
@@ -159,7 +162,7 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 \end{subsection}
 
 \begin{subsection}{Example}
-	\TODO Do we need an Example section?
+	\TODO Do we need an Example section? % Segundo Chris, eh bom
 \end{subsection}
 	
 \end{section}
@@ -296,7 +299,7 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 	
 	\begin{figure}[htbp]
 		\centering
-			\includegraphics[scale=0.5]{figures/exp-algorithms}
+			\includegraphics[width=0.5\textwidth]{figures/exp-algorithms}
 		\caption{Statistical summary of MoJoSim values for each architecture recovery algorithm.}
 		\label{fig:exp-algorithms}
 	\end{figure}
@@ -386,6 +389,7 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 \end{subsection}
 
 \begin{subsection}{Discussion}
+  % TODO: move to a new section
 	We have described three experiments based on the application of architecture recovery algorithms to synthetic graphs created by the model BCR+. The experiments present evidence that this approach is practicable and can be used to find insights about the algorithms that cannot be found with more traditional approaches.
 	
 	\TODO more
