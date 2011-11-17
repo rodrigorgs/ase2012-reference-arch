@@ -23,9 +23,27 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 \sloppy
 \maketitle
 
+\tableofcontents
+% \line(1,0){8.2 cm}
+\vspace{1 em}
+
 \TODO Redo some figures to fit better in a two column paper.
 
 \TODO Display authors in a 2x2 matrix.
+
+% \TODO Maybe put section ``The BCR+ Model'' after ``Software-Realism'' and before ``BCR+ Evaluation'', then move ``Triad Concentration Profiles'' to ``Background''. Maybe ``Related Work'' after ``Background''. The outline would become the following: Introduction, Background, (Related Work)?, Software-Realism, The BCR+ Model (includes description and evaluation), Evaluation of Architecture Recovery Algorithms.
+
+\TODO New proposed outline
+\begin{itemize}
+	\item Background and Related Work.
+
+	\item Software-Realism (Data Set, Training, Evaluation)
+	
+	\item BCR+ (Model Description and Example, Evaluation)
+	
+	\item Evaluation of Architecture Recovery Algorithms.
+	
+\end{itemize}
 
 % TODO entrada do BCR+ é uma arquitetura de referência.
 
@@ -40,12 +58,18 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 % I use begin/end instead of just \section so I can fold sections in my text editor
 \begin{section}{Introduction}
 % This section should be succinct, with no subheadings
-	Architectural drift
 
-	Reverse engineering / Architecture recovery algorithms
-	
-	Architecture recovery / discovery / reconstruction
-	
+	\begin{itemize}
+		\item Recovery of reference architectures with the help of architecture recovery algorithms. 
+		\item One kind of architecture recovery algorithms are software clustering algorithms. 
+		\item Not enough knowledge about performance of such algorithms.
+		\item One reason: difficult to find documented architectures for a variety of different systems.
+		\item We propose (and evaluate) a model that synthesize graphs resembling software dependency graphs in a systematic way.
+		\item Advantages: low cost (huge data sets), control over synthesis parameters.
+		\item Results: we found such a model, evaluated it positively, and used it to do some analysis on architecture recovery algorithms.
+		\item Structure of this paper. (First we devise a classifier do determine whether a graph is software-realistic)
+	\end{itemize}
+		
 	Architecture recovery algorithms have been used as a starting point to recover the reference architecture of a system family (Recovery of a Reference Architecture: A case study, by Eixelsberger / Architecture Recovery for Product Families, by Pinzger et al / Enhancing Domain-Specific Software Architecture Recovery, by Ivkovic and Godfrey) 
 	([LIMBO] Improving the build architecture of legacy C/C++ software systems, by Dayani-Fard et al / [Bunch] ).
 	
@@ -55,57 +79,174 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{section}{Background}
-	Architecture recovery algorithms
-
-	Evaluation of architecture recovery algorithms. 
-	
-\end{section}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{section}{Proposed solution}
-	
-	Goal: analyze or compare architecture recovery algorithms in different contexts.
-	
-	Research approach:
-	
+\begin{section}{Background and Related Work}
 	\begin{itemize}
-		\item Create a model that synthesizes graphs that are similar to software dependency graphs, given a reference architecture
-		
+		\item Architecture recovery (or discovery, or reconstruction). 
 		\begin{itemize}
-			\item Create a graph classifier, that determines if a graph is likely to be a software dependency graph (i.e., if it is software-realistic)
-			\item Evaluate the classifier, in terms of precision and recall
-			\item Using the classifier, determine if the model synthesizes software-realistic graphs 
-		\end{itemize}		
+			\item Software clustering algorithms. ACDC, Bunch, Hierarchical.
+			\item Software dependency graphs.
+			\item Evaluation of software clustering algorithms (authoritativeness criterium).
+			\item Comparison between architectures (MoJoSim metric).
+			\item Related work: package dependencies, random graphs, evaluating clustering algorithms with the LFR model.
+		\end{itemize}
+		
+		\item Network theory
+		\begin{itemize}
+			\item (For practical purposes, network means graph)
+			\item Definitions: vertex, edge, degree (in- and out-), degree distribution
+			\item Scale-free networks (power law degree distributions)
+			\item Scale-free networks in software systems
+			\item Triad concentration profiles. TCPs as signature for a domain. TCPs in software. 
+		\end{itemize}
 	\end{itemize}
-	
-	Usage (exemplified in our proof of concept):
-	
-	\begin{itemize}
-		\item Use the model to synthesize a variety of graphs. 
 
-		\item Apply architecture recovery algorithms to the graphs.
-
-		\item Compare recovered with reference architectures.
-
-		\item Analyze.
-	\end{itemize}
-	
 	
 \end{section}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{section}{The BCR+ model}	
+% \begin{section}{Proposed solution}
+% 	\TODO move to introduction
+% 	Goal: analyze or compare architecture recovery algorithms in different contexts.
+% 	
+% 	Research approach:
+% 	
+% 	\begin{itemize}
+% 		\item Create a model that synthesizes graphs that are similar to software dependency graphs, given a reference architecture
+% 		
+% 		\begin{itemize}
+% 			\item Create a graph classifier, that determines if a graph is likely to be a software dependency graph (i.e., if it is software-realistic)
+% 			\item Evaluate the classifier, in terms of precision and recall
+% 			\item Using the classifier, determine if the model synthesizes software-realistic graphs 
+% 		\end{itemize}		
+% 	\end{itemize}
+% 	
+% 	Usage (exemplified in our proof of concept):
+% 	
+% 	\begin{itemize}
+% 		\item Use the model to synthesize a variety of graphs. 
+% 	
+% 		\item Apply architecture recovery algorithms to the graphs.
+% 	
+% 		\item Compare recovered with reference architectures.
+% 	
+% 		\item Analyze.
+% 	\end{itemize}
+% 	
+% 	
+% \end{section}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{section}{Software-Realism}
+	% Motifs / Triads. Triad concentration profiles.
+	% Software-realism metric.
+	% Software-realism classifier. Training and testing the classifier.
+	% Software-realism for the BCR+ model. (Cite previous paper, where we also evaluate software-realism for three other models)
+
+	If synthetic graphs are to be used as surrogates to dependency graphs extracted from the source code of software systems, it is expected that they resemble such graphs. The property of a graph to resemble software dependency graphs is what we call software-realism. Hence, we seek to prove that BCR+ produces software-realistic graphs.
+	
+	To this end, we propose a graph classifier---based on the concept of triad concentration profiles---that, given a graph, outputs whether it is software-realistic or not (i.e., whether it is likely that the graph represents dependencies in a software system). Then, we show that this classifier presents high precision and high recall. Finally, we conclude that, with a suitable configuration of parameters, BCR+ is able to synthesize software-realistic graphs, indistinguishable from software dependency graphs.
+		
+\begin{subsection}{Triad Concentration Profiles}
+	
+	Before presenting the graph classifier, we introduce the concept of triads and triad concentration profiles. Given three vertices, one can conceive 13 distinct connected directed graphs---the so-called triads---, as shown in Figure \ref{fig:triads}. By counting how often each triad appears in a graph, one can build a 13-dimension vector that is called the triad concentration profile for that particular graph. % it's like the signature for a graph.
+
+	\begin{figure*}[htbp]
+		\centering
+			\includegraphics[scale=1]{figures/triads}
+		\caption{All triads---connected directed graphs with three vertices---, numbered from 1 to 13.}
+		\label{fig:triads}
+	\end{figure*}
+	
+	Previous work has shown that graphs from the same domain tend to be characterized by similar triad concentration profiles \cite{Milo2002}. For example, Figure \ref{fig:triads}(a) presents triad concentration profiles for two software dependency graphs, whereas Figure \ref{fig:triads}(b) presents triad concentration profiles for graphs in distinct domains: a software dependency graph and a linguistic graph. An informal analysis reveals that the similarity between the profiles is greater in the first case. It should suffice to notice that, in the second case, the concentration of the first two triads is somewhat reversed (in the linguistic graph, the second triad is the most frequent).
+
+	\begin{figure*}[htbp]
+		\centering
+			\includegraphics[scale=1]{figures/tcp}
+		\caption{Comparison between triad concentration profiles for three distinct graphs (computed with the igraph tool \cite{igraph}). (a) Class dependency graphs for two softwares: JabRef, version 2.5b2 (left) and ArgoUML version 0.28 (right). (b) Graph for JabRef, version 2.5b2 (left), and graph of word succession in a sample of Japanese texts (right) \cite{Milo2004}.}
+		\label{fig:tcp}
+	\end{figure*}
+	
+	Many authors \cite{Milo2004,Ma2007,Lin2008} have explored triad concentration profiles as a means to find clusters of structurally similar graphs. The results suggest that such profiles can be effectively used to identify groups of graphs from the same domain (e.g., social, linguistic, biologic etc.).
+			
+\end{subsection}
+
+\begin{subsection}{Graph Classifier}
+
+We propose a classifier, based on triad concentration profiles, that, given a graph, determine if it is software-realistic (i.e., if it is likely to be a software dependency graph). The classifier is developed by a neural network on a data set containing both software and non-software graphs. We show that it is capable of classifying correctly most graphs.
+
+% In order to determine whether triad concentration profiles are indeed effective in distinguishing software dependency graphs from other graphs, we use them as parameters of ... \TODO
+
+\begin{subsubsection}{Data Set} \label{sec:data-set}
+	
+	In order to train our classifier, we have collected 131 graphs, including software dependency networks and graphs from other domains.
+	
+	We have collected 66 directed graphs that were made available by researchers working on domains such as biology, sociology, technology, and linguistics. The size of these graphs range from 32 to 18,163 vertices. The complete list of graphs can be found in Appendix A. % TODO
+	
+	Also, we have collected 65 open source software systems written in Java and listed at SourceForge.net\footnote{\url{http://sourceforge.net/about}} among the most popular as of 2008. From each software system one dependency graph was extracted, as follows.
+	
+	The archive for each software system contained one or more JAR files (Java Archive), containing object code for each class or interface. Some JAR files were generic libraries used by the systems; these files were removed from the extraction, as they are not really part of the software and are not considered by architecture recovery algorithms.
+	
+	Then, we used the tool Dependency Finder\footnote{\url{http://depfind.sf.net/}} in order to extract dependencies between classes (or interfaces) from the remaining JAR files. This particular tool was chosen because of the ease of use from the command-line, enabling its integration in scripting environments. We believe that any other tool with the same purpose would produce similar outputs.
+	
+	The graphs that were extracted contain vertices representing Java classes and interfaces. The edges represent any reference from one class/interface to another in the object code, including inheritance, aggregation, method call, object instantiation and attribute read/write.
+	
+	After the extraction process, we ended up with 65 software dependency graphs, with sizes ranging from 63 to 6,433 vertices. More information about these graphs can be found in Appendix A. % TODO
+	
+	For each of the 131 graphs, we extracted its triad concentration profile using the tool igraph \cite{igraph}. No other information about the network (such as number of vertices or number of edges) was used to build the classifier.
+
+\end{subsubsection}
+
+\begin{subsubsection}{Training and Evaluation}
+	
+	The data set with 131 graphs (65 software dependency graphs, 66 graphs from other domains) was used to a neural network classifier. To this end, each software dependency graph was labelled as software-realistic, and the other graphs were labelled as non software-realistic. 
+	
+	We chose, for the neural network, a multilayer perceptron with one hidden layer containing 7 nodes. First, we trained the neural network on the full data set with 131 graphs. Then, in order to obtain a reasonable estimation of the performance of the neural network, we used 10-fold stratified cross-validation.
+	
+	In 10-fold stratified cross-validation, the data set is split randomly in 10 folds (or parts), so that, in each fold, approximately half of the graphs are software-realistic (so as to reflect the proportions of each class in the full data set). Then, in each iteration, one fold is chosen as the test set, so that a neural network is trained on 9 folds and its performance is evaluated by having it try to predict the class of the graphs in the fold that is the test set. This way, each graph is used only once for testing purposes, so standard performance metrics such as precision and recall can be computed.
+	
+	\TODO We use the technique of random data splitting to measure the ability of the change burst metrics to predict defect- proneness. The data splitting technique is employed to get an independent assessment of how well the defect-proneness could be estimated from a population sample. 
+	
+	\TODO Precision and recall
+	
+	\TODO We used Weka.
+	
+	%  set and the remaining folds comprise the training set. That way, in each iteration, one neural network is trained (on the training set), and its performance is evaluated on the test set. 
+	% 
+	% In order to evaluate the performance of these classifiers, we used 10-fold stratified cross-validation. 
+	
+	% weka.wikispaces.com/Primer
+	% A more elaborate method is cross-validation. Here, a number of folds n is specified. The dataset is randomly reordered and then split into n folds of equal size. In each iteration, one fold is used for testing and the other n-1 folds are used for training the classifier. The test results are collected and averaged over all folds. This gives the cross-validation estimate of the accuracy. The folds can be purely random or slightly modified to create the same class distributions in each fold as in the complete dataset. In the latter case the cross-validation is called stratified. Leave-one-out (loo) cross-validation signifies that n is equal to the number of examples. Out of necessity, loo cv has to be non-stratified, i.e. the class distributions in the test set are not related to those in the training data. Therefore loo cv tends to give less reliable results. However it is still quite useful in dealing with small datasets since it utilizes the greatest amount of training data from the dataset.
+	
+\end{subsubsection}
+
+\begin{subsubsection}{Results}
+	
+	We evaluated the precision and recall of the graph classifier using the previously explained 10-fold cross-validation method. We obtained both a precision and a recall of 95.4\%, which is an excellent result.
+	
+	% The interpretation is that, given a graph that was classified as software-realistic, the probability of error (that is, the false positive rate) is about xxx\%. -- In fact we cannot know the false positive rate without knowing the true positive and true negative rate.
+	
+	We also trained a logistic regression model and neural networks with more nodes and more hidden layers, but none of these outperformed the simple neural network with one hidden layer containing 7 nodes.
+	
+	% Increasing the number of nodes or the number of layers did not yield better results. We also have trained a logistic regression model, that performed slightly worse than the neural network.
+	
+\end{subsubsection}
+
+\end{subsection}
+	
+\end{section}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{section}{The BCR+ Model}	
 	\newcommand{\din}[0]{\ensuremath{\delta_{in}}}
 	\newcommand{\dout}[0]{\ensuremath{\delta_{out}}}
 	\newcommand{\gin}[0]{\ensuremath{\mathrm{g}_{in}}}
 	\newcommand{\gout}[0]{\ensuremath{\mathrm{g}_{out}}}
 	
-	\TODO Talk about network theory / complex networks / scale-free networks 
-  %TODO Chris:	mv to background
-
+	\TODO evaluation should be the last subsection of this section
+	
 	When designing the architecture of a software system, the module viewpoint plays a major role, by specifying the modules of the system and their inter-relationships. Constraining such dependencies benefits the maintenatibility, portability, and reusability of the software system.
 	
 	In this section, we describe the BCR+ model for synthesizing graphs from a description of the module viewpoint of an arbitrary architecture --- that is, the modules and dependencies between modules. The BCR+ model produces---by means of the mechanisms of growth and preferential attachment---directed graphs that are both scale-free and segmented in modules.
@@ -202,111 +343,10 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 \end{subsection}
 
 \begin{subsection}{Example}
-	\TODO Do we need an Example section? % Segundo Chris, eh bom
+	\TODO Add example section from dissertation
 \end{subsection}
 	
-\end{section}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{section}{Software-Realism}
-	% Motifs / Triads. Triad concentration profiles.
-	% Software-realism metric.
-	% Software-realism classifier. Training and testing the classifier.
-	% Software-realism for the BCR+ model. (Cite previous paper, where we also evaluate software-realism for three other models)
-
-	If synthetic graphs are to be used as surrogates to dependency graphs extracted from the source code of software systems, it is expected that they resemble such graphs. The property of a graph to resemble software dependency graphs is what we call software-realism. Hence, we seek to prove that BCR+ produces software-realistic graphs.
-	
-	To this end, we propose a graph classifier---based on the concept of triad concentration profiles---that, given a graph, outputs whether it is software-realistic or not (i.e., whether it is likely that the graph represents dependencies in a software system). Then, we show that this classifier presents high precision and high recall. Finally, we conclude that, with a suitable configuration of parameters, BCR+ is able to synthesize software-realistic graphs, indistinguishable from software dependency graphs.
-		
-\begin{subsection}{Triad Concentration Profiles}
-	
-	Before presenting the graph classifier, we introduce the concept of triads and triad concentration profiles. Given three vertices, one can conceive 13 distinct connected directed graphs---the so-called triads---, as shown in Figure \ref{fig:triads}. By counting how often each triad appears in a graph, one can build a 13-dimension vector that is called the triad concentration profile for that particular graph. % it's like the signature for a graph.
-
-	\begin{figure*}[htbp]
-		\centering
-			\includegraphics[scale=1]{figures/triads}
-		\caption{All triads---connected directed graphs with three vertices---, numbered from 1 to 13.}
-		\label{fig:triads}
-	\end{figure*}
-	
-	Previous work has shown that graphs from the same domain tend to be characterized by similar triad concentration profiles \cite{Milo2002}. For example, Figure \ref{fig:triads}(a) presents triad concentration profiles for two software dependency graphs, whereas Figure \ref{fig:triads}(b) presents triad concentration profiles for graphs in distinct domains: a software dependency graph and a linguistic graph. An informal analysis reveals that the similarity between the profiles is greater in the first case. It should suffice to notice that, in the second case, the concentration of the first two triads is somewhat reversed (in the linguistic graph, the second triad is the most frequent).
-
-	\begin{figure*}[htbp]
-		\centering
-			\includegraphics[scale=1]{figures/tcp}
-		\caption{Comparison between triad concentration profiles for three distinct graphs (computed with the igraph tool \cite{igraph}). (a) Class dependency graphs for two softwares: JabRef, version 2.5b2 (left) and ArgoUML version 0.28 (right). (b) Graph for JabRef, version 2.5b2 (left), and graph of word succession in a sample of Japanese texts (right) \cite{Milo2004}.}
-		\label{fig:tcp}
-	\end{figure*}
-	
-	Many authors \cite{Milo2004,Ma2007,Lin2008} have explored triad concentration profiles as a means to find clusters of structurally similar graphs. The results suggest that such profiles can be effectively used to identify groups of graphs from the same domain (e.g., social, linguistic, biologic etc.).
-			
-\end{subsection}
-
-\begin{subsection}{Graph Classifier}
-
-We propose a classifier, based on triad concentration profiles, that, given a graph, determine if it is software-realistic (i.e., if it is likely to be a software dependency graph). The classifier is developed by a neural network on a data set containing both software and non-software graphs. We show that it is capable of classifying correctly most graphs.
-
-% In order to determine whether triad concentration profiles are indeed effective in distinguishing software dependency graphs from other graphs, we use them as parameters of ... \TODO
-
-\begin{subsubsection}{Data Set} \label{sec:data-set}
-	
-	In order to train our classifier, we have collected 131 graphs, including software dependency networks and graphs from other domains.
-	
-	We have collected 66 directed graphs that were made available by researchers working on domains such as biology, sociology, technology, and linguistics. The size of these graphs range from 32 to 18,163 vertices. The complete list of graphs can be found in Appendix A. % TODO
-	
-	Also, we have collected 65 open source software systems written in Java and listed at SourceForge.net\footnote{\url{http://sourceforge.net/about}} among the most popular as of 2008. From each software system one dependency graph was extracted, as follows.
-	
-	The archive for each software system contained one or more JAR files (Java Archive), containing object code for each class or interface. Some JAR files were generic libraries used by the systems; these files were removed from the extraction, as they are not really part of the software and are not considered by architecture recovery algorithms.
-	
-	Then, we used the tool Dependency Finder\footnote{\url{http://depfind.sf.net/}} in order to extract dependencies between classes (or interfaces) from the remaining JAR files. This particular tool was chosen because of the ease of use from the command-line, enabling its integration in scripting environments. We believe that any other tool with the same purpose would produce similar outputs.
-	
-	The graphs that were extracted contain vertices representing Java classes and interfaces. The edges represent any reference from one class/interface to another in the object code, including inheritance, aggregation, method call, object instantiation and attribute read/write.
-	
-	After the extraction process, we ended up with 65 software dependency graphs, with sizes ranging from 63 to 6,433 vertices. More information about these graphs can be found in Appendix A. % TODO
-	
-	For each of the 131 graphs, we extracted its triad concentration profile using the tool igraph \cite{igraph}. No other information about the network (such as number of vertices or number of edges) was used to build the classifier.
-
-\end{subsubsection}
-
-\begin{subsubsection}{Training and Evaluation}
-	
-	The data set with 131 graphs (65 software dependency graphs, 66 graphs from other domains) was used to a neural network classifier. To this end, each software dependency graph was labelled as software-realistic, and the other graphs were labelled as non software-realistic. 
-	
-	We chose, for the neural network, a multilayer perceptron with one hidden layer containing 7 nodes. First, we trained the neural network on the full data set with 131 graphs. Then, in order to obtain a reasonable estimation of the performance of the neural network, we used 10-fold stratified cross-validation.
-	
-	In 10-fold stratified cross-validation, the data set is split randomly in 10 folds (or parts), so that, in each fold, approximately half of the graphs are software-realistic (so as to reflect the proportions of each class in the full data set). Then, in each iteration, one fold is chosen as the test set, so that a neural network is trained on 9 folds and its performance is evaluated by having it try to predict the class of the graphs in the fold that is the test set. This way, each graph is used only once for testing purposes, so standard performance metrics such as precision and recall can be computed.
-	
-	\TODO We use the technique of random data splitting to measure the ability of the change burst metrics to predict defect- proneness. The data splitting technique is employed to get an independent assessment of how well the defect-proneness could be estimated from a population sample. 
-	
-	\TODO Precision and recall
-	
-	%  set and the remaining folds comprise the training set. That way, in each iteration, one neural network is trained (on the training set), and its performance is evaluated on the test set. 
-	% 
-	% In order to evaluate the performance of these classifiers, we used 10-fold stratified cross-validation. 
-	
-	% weka.wikispaces.com/Primer
-	% A more elaborate method is cross-validation. Here, a number of folds n is specified. The dataset is randomly reordered and then split into n folds of equal size. In each iteration, one fold is used for testing and the other n-1 folds are used for training the classifier. The test results are collected and averaged over all folds. This gives the cross-validation estimate of the accuracy. The folds can be purely random or slightly modified to create the same class distributions in each fold as in the complete dataset. In the latter case the cross-validation is called stratified. Leave-one-out (loo) cross-validation signifies that n is equal to the number of examples. Out of necessity, loo cv has to be non-stratified, i.e. the class distributions in the test set are not related to those in the training data. Therefore loo cv tends to give less reliable results. However it is still quite useful in dealing with small datasets since it utilizes the greatest amount of training data from the dataset.
-	
-\end{subsubsection}
-
-\begin{subsubsection}{Results}
-	
-	We evaluated the precision and recall of the graph classifier using the previously explained 10-fold cross-validation method. We obtained both a precision and a recall of 95.4\%, which is an excellent result.
-	
-	% The interpretation is that, given a graph that was classified as software-realistic, the probability of error (that is, the false positive rate) is about xxx\%. -- In fact we cannot know the false positive rate without knowing the true positive and true negative rate.
-	
-	We also trained a logistic regression model and neural networks with more nodes and more hidden layers, but none of these outperformed the simple neural network with one hidden layer containing 7 nodes.
-	
-	% Increasing the number of nodes or the number of layers did not yield better results. We also have trained a logistic regression model, that performed slightly worse than the neural network.
-	
-\end{subsubsection}
-
-\end{subsection}
-	
-\end{section}
-
-\begin{section}{BCR+ Evaluation}
+\begin{subsection}{BCR+ Evaluation}
 	In the previous subsection, we have proposed a graph classifier that determine, with high precision and recall, whether a graph is software-realistic. In this section, we evaluate whether the BCR+ graph model is able to synthesize software-realistic graphs. The evaluation process is divided in three steps:
 	
 	\begin{enumerate}
@@ -317,7 +357,7 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 		\item \emph{graph classification}: each graph is classified (using the previously built graph classifier) as software-realistic or non software-realistic.
 	\end{enumerate}
 	
-\begin{subsection}{Parameter Selection}
+\begin{subsubsection}{Parameter Selection}
 	To synthesize a large variety of graphs, we have varied the value of each parameter from BCR+ so as to cover a wide range of possible values. Each assignment of values to parameters is called a configuration. We have chosen configurations for each possible combination of the selected parameter values.
 	
 	\TODO we also tried to keep the number of values for each parameter low, to avoid combinatorial explosion that would render the evaluation infeasible. 
@@ -341,20 +381,27 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 	For the selected parameter values, there are 9,500 configurations.
 	%For unbounded parameters, we have chosen values based on the literature or grounded in the observation of software dependency graphs.
 
-\end{subsection}
+\end{subsubsection}
 
-\begin{subsection}{Graph Synthesis and Evaluation}
+\begin{subsubsection}{Graph Synthesis and Evaluation}
 	
-	
-	
-\end{subsection}
+	For each parameter configuration, three graphs were synthesized, using distinct random seeds for each generation. Therefore, there were 28,500 synthetic graphs. Next, we classified each graph using the previously present graph classifier.
 
-	4,517 networks (15.8\% of 28,500) were classified as software-realistic, a result better than chance.
+	% , to determine whether at least some of the graphs are software-realistic. We did not expect all graphs to be software-realistic. Because the synthesis process and the graph classification are both fast (less than 1 second on a 2.2 GHz processor, with no code optimizations), we can synthesize a lot of graphs and filter out the ones that are not software-realistic, as long as there are at least some software-realistic graphs.
 	
-	\TODO for comparison, we have built random graphs. None was considered software-realistic.
+	A total of 4,517 (15.8\%) graphs were classified as software-realistic. Although the majority of the graphs synthesized by BCR+ do not resemble software dependency graphs, the results show that BCR+ is feasible for practical use. For any analyses that require software-realistic graphs, we can synthesize a large amount of graphs and filter out the ones that are not software-realistic. Both the synthesis and the classification process are fast (less than 1 second on a 2.2 GHz processor, using non-optimized code).
+
+	For comparison, we also synthesized 81 random directed graphs using a naive algorithm that keeps adding edges for randomly selected pairs of vertices until it reaches the desired number of edges \cite{Erdos1959}. We synthesized graphs with 1,000 vertices and the number of edges was chosen in the set $\{2,000; 2,100; \ldots ; 10,000\}$. No graph from this set was classified as software-realistic. \TODO redo the classification of ER graphs using the new neural network classifier.
+
+	The conclusion is that BCR+, together with the graph classifier, can be effectively used to synthesize graphs that resemble software dependency graphs. Also, we showed that naive graph synthesis algorithms, previously used in architecture recovery studies \cite{Mitchell2007}, are very unlikely to synthesize software-realistic graphs, even when a variety of parameter configurations is used.
 	
-	\TODO build a predictor of the software-realism based on BCR+ parameters?
+	% \TODO histogram showing how many configurations had 3 software-realistic graphs (100\%), how many had 2 (66\%), how many had 1 (33\%), how many had 0. -- just out of curiosity
 	
+	% \TODO build a predictor of the software-realism based on BCR+ parameters? -- maybe not, we already argued that synthesis + classification is fast.
+	
+\end{subsubsection}
+
+\end{subsection}	
 \end{section}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -469,6 +516,8 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 	\end{table*}
 	
 	We conclude that, in general, the presence of modules with mutual, bidirectional dependencies, influences negatively the performance of the algorithms that were analyzed. The observed difference was small in our study with two modules, but we suspect that this difference can be greater on graphs with more modules and more bidirectional dependencies.
+
+	\TODO The conclusion should be that there is a difference, but the difference is not relevant because of its magnitude.
 	
 \end{subsection}
 
