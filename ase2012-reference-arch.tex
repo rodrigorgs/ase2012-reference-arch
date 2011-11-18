@@ -1,6 +1,8 @@
 % vim: tw=78 encoding=utf8 ts=2 sw=2 expandtab softtabstop=2
 \documentclass[11pt,twocolumn,a4paper,english]{article}
 
+% textmate: cmd+shift+;, change language to english, cmd+option+; (twice)
+
 \usepackage[utf8]{inputenc}
 \usepackage{babel}
 \usepackage{url}
@@ -26,6 +28,8 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 \tableofcontents
 % \line(1,0){8.2 cm}
 \vspace{1 em}
+
+\TODO Maybe add borders to (at least some) figures.
 
 \TODO Redo some figures to fit better in a two column paper.
 
@@ -242,12 +246,10 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 \begin{section}{The BCR+ Model}	
 	\newcommand{\din}[0]{\ensuremath{\delta_{in}}}
 	\newcommand{\dout}[0]{\ensuremath{\delta_{out}}}
-	\newcommand{\gin}[0]{\ensuremath{\mathrm{g}_{in}}}
-	\newcommand{\gout}[0]{\ensuremath{\mathrm{g}_{out}}}
+	\newcommand{\gin}[0]{\ensuremath{\mathrm{d}_{in}}}
+	\newcommand{\gout}[0]{\ensuremath{\mathrm{d}_{out}}}
 	
-	\TODO evaluation should be the last subsection of this section
-	
-	When designing the architecture of a software system, the module viewpoint plays a major role, by specifying the modules of the system and their inter-relationships. Constraining such dependencies benefits the maintenatibility, portability, and reusability of the software system.
+	When designing the architecture of a software system, the module viewpoint plays a major role, by specifying the modules of the system and their inter-relationships. Constraining such dependencies benefits the maintenability, portability, and reusability of the software system.
 	
 	In this section, we describe the BCR+ model for synthesizing graphs from a description of the module viewpoint of an arbitrary architecture --- that is, the modules and dependencies between modules. The BCR+ model produces---by means of the mechanisms of growth and preferential attachment---directed graphs that are both scale-free and segmented in modules.
 	
@@ -293,12 +295,12 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 	
 	There are three formation rules in BCR+. Each one modifies the output graph by adding or removing vertices or edges in the graph. Also, each formation rule has a probability of being applied, given by the parameters $p_1$, $p_2$ and $p_3$.
 
-\begin{figure*}[htbp]
+\begin{figure}[htbp]
 	\centering
-		\includegraphics[scale=1]{figures/bcr-rules}
+		\includegraphics[width=0.45\textwidth]{figures/bcr-rules}
 	\caption{Formation rules for BCR+. $M_i$ and $M_j$ are distinct modules, such as $M_i$ depends on $M_j$. In the diagram for each rule, thicker lines represent vertices and edges created when the rule is applied.}
 	\label{fig:bcr-rules}
-\end{figure*}
+\end{figure}
 
 	The rules are illustrated in Figure \ref{fig:bcr-rules}. Simplified rules:
 	
@@ -343,7 +345,24 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 \end{subsection}
 
 \begin{subsection}{Example}
-	\TODO Add example section from dissertation
+	
+	To illustrate the behavior, of BCR+, we show in Figure \ref{fig:bcr-example} an example of one step of graph synthesis process. Suppose that we chose $G$ to be the four-module graph from Figure \ref{fig:bcr-initial-graph}, so the first step is to create one vertex for each module and then connect them according to the edges in $G$. 
+	
+\begin{figure*}[htbp]
+	\centering
+		\includegraphics[width=\textwidth]{figures/bcr-example}
+	\caption{One step of BCR+.}
+	\label{fig:bcr-example}
+\end{figure*}
+	
+	Now, suppose that $\dout = 2$ and that rule 2 was chosen. In this case, a vertex must be chosen, and this choice must consider, for each vertex, $x$, the value of $\mathrm{f}(x) = \dout + \gout(x)$. In the figure, the value of $\mathrm{f}(x)$ for each vertex is represented by a number inside parentheses near the vertex (the number before the parentheses is simply $\gout(x)$, the out-degree of vertex $x$).
+	
+	Each vertex, $x$, has a probability $\mathrm{P}(x)$ of being chosen, where $\mathrm{P}(x) = \frac{\mathrm{f}(x)}{\sum_i \mathrm{f}(i)}$. In this particular example, $\mathrm{P}(x) = \frac{\mathrm{f}(x)}{11}$, so that the sum of all probability values equals 1.0.
+	
+	The probability values associated with each vertex can be represented by the real line shown in the center of Figure \ref{fig:bcr-example}. Each vertex occupies a segment in the line that is proportional to the probability of it being chosen. The choice of the vertex is made by picking at random a real number between 0.0 and 1.0, marking it in the line and analyzing in which segment it falls. In the example, the value $\frac{5}{11}$ was chosen, which corresponds to a point of the segment of $v_1$ in the line. After the vertex $v_1$ was chosen, rule 2 determines that a new vertex (we can call it $v_4$) is added to $M_1$ (the module that contains $v_1$), together with an edge from the chosen vertex, $v_1$, to newly created vertex, $v_1$.
+	
+	It should be clear that vertices with high out-degree are more likely to receive new outgoing edges. The parameter $\dout$ can be thought as a base out-degree that is added to all vertices when the probabilities are computed, thus rendering the probability distribution more homogeneous. In the present example, if $\dout$ was zero, vertices $v_2$ and $v_3$ could not be chosen, because both have zero out-degree. Of course, the same reasoning applies to $\din$ and the in-degree.
+
 \end{subsection}
 	
 \begin{subsection}{BCR+ Evaluation}
@@ -407,16 +426,11 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{section}{Evaluation of Architecture Recovery Algorithms}
-	\TODO Clustering
-
-	\TODO Brief description about Bunch, ACDC, SL75/SL90, CL75, CL90
-	
-	\TODO Traditional experimental setup for evaluation of architecture recovery algorithms: given a dependency graph and a reference architecture, run the algorithm on the graph and compare the recovered architecture with the reference architecture.
-	
-	\TODO MoJo metric.
+	\TODO Recap Bunch, ACDC, SL75, SL90, CL75, CL90; MoJo metric; experimental setup for evaluation of architecture recovery algorithms: given a dependency graph and a reference architecture, run the algorithm on the graph and compare the recovered architecture with the reference architecture.
 
 \begin{subsection}{Experimental Setup}
 	\TODO Section 6.3 from dissertation
+	
 \end{subsection}
 
 \begin{subsection}{Comparison of Architecture Recovery Algorithms}
