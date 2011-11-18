@@ -13,7 +13,7 @@
 \newcommand{\TODO}{\textbf{TODO:} }
 
 \title{
-Synthesizing Benchmarks for Architecture Recovery Algorithms}
+Synthetic Benchmarks for Architecture Recovery Algorithms}
 \author{Rodrigo Souza \\ rodrigorgs@gmail.com 
 \and Dalton Guerrero \\ dalton@dsc.ufcg.edu.br
 \and Jorge Figueiredo \\ abrantes@dsc.ufcg.edu.br
@@ -29,6 +29,8 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 % \line(1,0){8.2 cm}
 \vspace{1 em}
 
+\TODO Add configurations for $G$ in the experiment
+
 \TODO Maybe add borders to (at least some) figures.
 
 \TODO Redo some figures to fit better in a two column paper.
@@ -36,18 +38,6 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 \TODO Display authors in a 2x2 matrix.
 
 % \TODO Maybe put section ``The BCR+ Model'' after ``Software-Realism'' and before ``BCR+ Evaluation'', then move ``Triad Concentration Profiles'' to ``Background''. Maybe ``Related Work'' after ``Background''. The outline would become the following: Introduction, Background, (Related Work)?, Software-Realism, The BCR+ Model (includes description and evaluation), Evaluation of Architecture Recovery Algorithms.
-
-\TODO New proposed outline
-\begin{itemize}
-	\item Background and Related Work.
-
-	\item Software-Realism (Data Set, Training, Evaluation)
-	
-	\item BCR+ (Model Description and Example, Evaluation)
-	
-	\item Evaluation of Architecture Recovery Algorithms.
-	
-\end{itemize}
 
 % TODO entrada do BCR+ é uma arquitetura de referência.
 
@@ -65,9 +55,9 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 
 	\begin{itemize}
 		\item Recovery of reference architectures with the help of architecture recovery algorithms. 
-		\item One kind of architecture recovery algorithms are software clustering algorithms. 
+		\item One kind of architecture recovery algorithms are software clustering algorithms (graph-based).
 		\item Not enough knowledge about performance of such algorithms.
-		\item One reason: difficult to find documented architectures for a variety of different systems.
+		\item One reason: difficult to find documented architectures for a variety of different systems. Lack of benchmarks to test such algorithms.
 		\item We propose (and evaluate) a model that synthesize graphs resembling software dependency graphs in a systematic way.
 		\item Advantages: low cost (huge data sets), control over synthesis parameters.
 		\item Results: we found such a model, evaluated it positively, and used it to do some analysis on architecture recovery algorithms.
@@ -178,15 +168,15 @@ Synthesizing Benchmarks for Architecture Recovery Algorithms}
 
 \begin{subsection}{Graph Classifier}
 
-We propose a classifier, based on triad concentration profiles, that, given a graph, determine if it is software-realistic (i.e., if it is likely to be a software dependency graph). The classifier is developed by a neural network on a data set containing both software and non-software graphs. We show that it is capable of classifying correctly most graphs.
+We propose a classifier, based on triad concentration profiles, that, given a graph, determine if it is software-realistic (i.e., if it is likely to be a software dependency graph). In other words, we consider two classes of graphs---software-realistic and non software-realistic---, and build a model that determines the class of any given graph. 
 
-% In order to determine whether triad concentration profiles are indeed effective in distinguishing software dependency graphs from other graphs, we use them as parameters of ... \TODO
+The classifier is developed by training a logistic regression model on a data set containing both software and non-software graphs. We show that it is capable of correctly classifying most graphs.
 
 \begin{subsubsection}{Data Set} \label{sec:data-set}
 	
 	In order to train our classifier, we have collected 131 graphs, including software dependency networks and graphs from other domains.
 	
-	We have collected 66 directed graphs that were made available by researchers working on domains such as biology, sociology, technology, and linguistics. The size of these graphs range from 32 to 18,163 vertices. The complete list of graphs can be found in Appendix A. % TODO
+	We have collected 66 directed graphs that were made available by researchers working on domains such as biology, sociology, technology, and linguistics. The size of these graphs range from 32 to 18,163 vertices. The complete list of graphs can be found in Appendix A. \TODO Create Appendix
 	
 	Also, we have collected 65 open source software systems written in Java and listed at SourceForge.net\footnote{\url{http://sourceforge.net/about}} among the most popular as of 2008. From each software system one dependency graph was extracted, as follows.
 	
@@ -202,39 +192,43 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 
 \end{subsubsection}
 
-\begin{subsubsection}{Training and Evaluation}
+\begin{subsubsection}{Training and Testing}
 	
-	The data set with 131 graphs (65 software dependency graphs, 66 graphs from other domains) was used to a neural network classifier. To this end, each software dependency graph was labelled as software-realistic, and the other graphs were labelled as non software-realistic. 
+	The data set with 131 graphs (65 software dependency graphs, 66 graphs from other domains) was used to train a logistic regression classifier using the data mining tool Weka \cite{weka}. To this end, we considered that software dependency graphs are software-realistic, and the other graphs are not. 
+		
+	First, we trained the logistic regression model on the full data set with 131 graphs. After the training, the logistic regression classifier was tested on the same 131 graphs, being able to correctly classify 129 of them. Of course, this result is not an accurate estimation of the performance of the classifier, since the same data set was used for training and for testing.
 	
-	We chose, for the neural network, a multilayer perceptron with one hidden layer containing 7 nodes. First, we trained the neural network on the full data set with 131 graphs. Then, in order to obtain a reasonable estimation of the performance of the neural network, we used 10-fold stratified cross-validation.
+	In order to assess how well the graph classification could perform on an independent data set, we used the method of 10-fold stratified cross-validation. In this method, the data set is split randomly in 10 folds (or partitions). The folds are stratified, that is, in each fold, the distribution of classes should match approximately that of the full data set. In our data set, it means that each fold should contain approximately $\frac{65}{131} = 49.6\%$ of software-realistic graphs. 
 	
-	In 10-fold stratified cross-validation, the data set is split randomly in 10 folds (or parts), so that, in each fold, approximately half of the graphs are software-realistic (so as to reflect the proportions of each class in the full data set). Then, in each iteration, one fold is chosen as the test set, so that a neural network is trained on 9 folds and its performance is evaluated by having it try to predict the class of the graphs in the fold that is the test set. This way, each graph is used only once for testing purposes, so standard performance metrics such as precision and recall can be computed.
+	The cross-validation is performed in 10 iterations. In each iteration, one fold is chosen as the test set, and the remaining ones, combined, form the training set. This way, in each iteration, a classifier is trained on 90\% of the data set and trained  on the other 10\%. It should be noted that each object (in our case, graph) is used exactly once for testing. Because of this, we can compare the real and the predicted class for each object, and then compute standard performance metrics such as precision and recall. 
 	
-	\TODO We use the technique of random data splitting to measure the ability of the change burst metrics to predict defect- proneness. The data splitting technique is employed to get an independent assessment of how well the defect-proneness could be estimated from a population sample. 
+	Let $S$ be the set of all software-realistic graphs from our data set (that is, all graphs that were extracted from software systems), and let $L$ bet the set of networks predicted by the classifier to be software-realistic. The precision is, then, given by
 	
-	\TODO Precision and recall
+	$$
+	\mathrm{precision}: ~\frac{|S \cap L|}{|L|},
+	$$
 	
-	\TODO We used Weka.
+	and the recall is given by
 	
-	%  set and the remaining folds comprise the training set. That way, in each iteration, one neural network is trained (on the training set), and its performance is evaluated on the test set. 
-	% 
-	% In order to evaluate the performance of these classifiers, we used 10-fold stratified cross-validation. 
+	$$
+	\mathrm{recall}: ~\frac{|S \cap L|}{|S|}.
+	$$
 	
-	% weka.wikispaces.com/Primer
-	% A more elaborate method is cross-validation. Here, a number of folds n is specified. The dataset is randomly reordered and then split into n folds of equal size. In each iteration, one fold is used for testing and the other n-1 folds are used for training the classifier. The test results are collected and averaged over all folds. This gives the cross-validation estimate of the accuracy. The folds can be purely random or slightly modified to create the same class distributions in each fold as in the complete dataset. In the latter case the cross-validation is called stratified. Leave-one-out (loo) cross-validation signifies that n is equal to the number of examples. Out of necessity, loo cv has to be non-stratified, i.e. the class distributions in the test set are not related to those in the training data. Therefore loo cv tends to give less reliable results. However it is still quite useful in dealing with small datasets since it utilizes the greatest amount of training data from the dataset.
+	Intuitively, the precision is the proportion of graphs predicted as software-realistic that are indeed software-realistic. Recall is the proportion of software-realistic graphs that are correctly predicted by the classifier. A good classifier should have high precision and high recall.
 	
 \end{subsubsection}
 
 \begin{subsubsection}{Results}
 	
-	We evaluated the precision and recall of the graph classifier using the previously explained 10-fold cross-validation method. We obtained both a precision and a recall of 95.4\%, which is an excellent result.
+	We evaluated the precision and recall of the graph classifier using the previously explained 10-fold cross-validation method. We obtained 92.6\% precision and 96.9\% recall.
 	
-	% The interpretation is that, given a graph that was classified as software-realistic, the probability of error (that is, the false positive rate) is about xxx\%. -- In fact we cannot know the false positive rate without knowing the true positive and true negative rate.
-	
-	We also trained a logistic regression model and neural networks with more nodes and more hidden layers, but none of these outperformed the simple neural network with one hidden layer containing 7 nodes.
-	
-	% Increasing the number of nodes or the number of layers did not yield better results. We also have trained a logistic regression model, that performed slightly worse than the neural network.
-	
+	The model is the following:
+$$	
+	Predicted\_Class(T) = G(0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10} -138.36t_{12} - 843.11t_{13}),
+$$
+
+	where G is the sigmoid function. When the value of the function is greater than 0.5, the graph is classified as software-realistic, otherwise, it is classified as non software-realistic.
+		
 \end{subsubsection}
 
 \end{subsection}
@@ -378,10 +372,10 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 	
 \begin{subsubsection}{Parameter Selection}
 	To synthesize a large variety of graphs, we have varied the value of each parameter from BCR+ so as to cover a wide range of possible values. Each assignment of values to parameters is called a configuration. We have chosen configurations for each possible combination of the selected parameter values.
-	
-	\TODO we also tried to keep the number of values for each parameter low, to avoid combinatorial explosion that would render the evaluation infeasible. 
-	
+		
 	To recap, BCR+ has seven parameters: the number of vertices, $n$; the reference architecture, $G$; three complementary probabilities, $p_1$, $p_2$, and $p_3$; the mixing probability, $\mu$; and nonnegative values $\din$ and $\dout$. The probabilities are bounded parameters, with values ranging from 0.0 to 1.0. The remaining parameters are more complex.
+	
+	Because most parameters take real values as input, it is not possible to cover all possible values, so they have been split in discrete intervals. Also, to avoid combinatorial explosion, we have limited the configuration space to at most six values per parameter.
 	
 	We have fixed the number of vertices, $n$, to 1,000, a value that has been used in related work \cite{Lancichinetti2009b}. To fix the number of vertices should not influence the results, since it affects only the size of the graph, not the pattern of connections between vertices.
 	
@@ -408,15 +402,15 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 
 	% , to determine whether at least some of the graphs are software-realistic. We did not expect all graphs to be software-realistic. Because the synthesis process and the graph classification are both fast (less than 1 second on a 2.2 GHz processor, with no code optimizations), we can synthesize a lot of graphs and filter out the ones that are not software-realistic, as long as there are at least some software-realistic graphs.
 	
-	A total of 4,517 (15.8\%) graphs were classified as software-realistic. Although the majority of the graphs synthesized by BCR+ do not resemble software dependency graphs, the results show that BCR+ is feasible for practical use. For any analyses that require software-realistic graphs, we can synthesize a large amount of graphs and filter out the ones that are not software-realistic. Both the synthesis and the classification process are fast (less than 1 second on a 2.2 GHz processor, using non-optimized code).
+	A total of 10,000 (35.1\%) graphs were classified as software-realistic. Although the majority of the graphs synthesized by BCR+ do not resemble software dependency graphs, the results show that BCR+ is feasible for practical use. For any analyses that require software-realistic graphs, we can synthesize a large amount of graphs and filter out the ones that are not software-realistic, because both the synthesis and the classification process are fast (less than 1 second for each graph on a 2.2 GHz processor, using non-optimized code).
 
-	For comparison, we also synthesized 81 random directed graphs using a naive algorithm that keeps adding edges for randomly selected pairs of vertices until it reaches the desired number of edges \cite{Erdos1959}. We synthesized graphs with 1,000 vertices and the number of edges was chosen in the set $\{2,000; 2,100; \ldots ; 10,000\}$. No graph from this set was classified as software-realistic. \TODO redo the classification of ER graphs using the new neural network classifier.
-
+	For comparison, we also synthesized 1620 random directed graphs using a naive algorithm that keeps adding edges for randomly selected pairs of vertices until it reaches the desired number of edges \cite{Erdos1959}. We synthesized graphs with 1,000 vertices and the number of edges was chosen in the set $\{2,000; 2,100; \ldots ; 10,000\}$. For each value for the number of edges, 20 graphs were created. No graph from this set was classified as software-realistic. 
+	
 	The conclusion is that BCR+, together with the graph classifier, can be effectively used to synthesize graphs that resemble software dependency graphs. Also, we showed that naive graph synthesis algorithms, previously used in architecture recovery studies \cite{Mitchell2007}, are very unlikely to synthesize software-realistic graphs, even when a variety of parameter configurations is used.
 	
 	% \TODO histogram showing how many configurations had 3 software-realistic graphs (100\%), how many had 2 (66\%), how many had 1 (33\%), how many had 0. -- just out of curiosity
 	
-	% \TODO build a predictor of the software-realism based on BCR+ parameters? -- maybe not, we already argued that synthesis + classification is fast.
+	% Build a predictor of the software-realism based on BCR+ parameters? -- maybe not, we already argued that synthesis + classification is fast.
 	
 \end{subsubsection}
 
@@ -440,7 +434,7 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 	
 	We have selected for this experiment only the graphs that were classified as software-realistic, totalizing about 6,000 graphs. Then, each algorithm was applied to each one of the synthetic graphs, resulting in a set of clusters together with a mapping from the set of vertices to the set of clusters. The performance of the clusterings were measured with the metric MoJoSim.
 	
-	The Figure \ref{fig:exp-algorithms} shows a boxplot of the MoJoSim values that were measured for each algorithm. The dashed lines indicate the maximum and minimum value from the data. Comparing the median performance of the algorithms, it is clear that ACDC presents the best performance, followed by Bunch, and then by the hierachical algorithms. These differences were verified to be significative by applying a paired Wilcoxon test ($\alpha = 0.05$), with Bonferroni correction to account for multiple hypothesis testing. Among the hierarchical algorithms, there was no evidence that their performances differ.
+	The Figure \ref{fig:exp-algorithms} shows a box plot of the MoJoSim values that were measured for each algorithm. The dashed lines indicate the maximum and minimum value from the data. Comparing the median performance of the algorithms, it is clear that ACDC presents the best performance, followed by Bunch, and then by the hierachical algorithms. These differences were verified to be significative by applying a paired Wilcoxon test ($\alpha = 0.05$), with Bonferroni correction to account for multiple hypothesis testing. Among the hierarchical algorithms, there was no evidence that their performances differ.
 	
 	\begin{figure}[htbp]
 		\centering
@@ -449,10 +443,10 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 		\label{fig:exp-algorithms}
 	\end{figure}
 	
-	Another noteworthy aspect of the data is the dispersion of values. The algorithm Bunch presents the smaller dispersion, with more that half of the values between 0.60 and 0.80 (minimum value = 0.45). In the case of ACDC, half of the values are between 0.65 a 0.85, but the minimum value is 0.01. This observation suggests that, although Bunch presents overall inferior performance when compared with ACDC, it can be a resonable choice for yielding more predictable results.
+	Another noteworthy aspect of the data is the dispersion of values. The algorithm Bunch presents the smaller dispersion, with more than half of the values between 0.60 and 0.80 (minimum value = 0.45). In the case of ACDC, half of the values are between 0.65 a 0.85, but the minimum value is 0.01. This observation suggests that, although Bunch presents overall inferior performance when compared with ACDC, it can be a reasonable choice for yielding more predictable results.
 	
 	\TODO move to a discussion section.
-	The results disagree with conclusions from Wu, Hassah, and Holt \cite{Wu2005}. They have concluded that the SL algorithms outperform ACDC, which outperforms Bunch, which outperforms the CL algorithms. The disagreement probably can be explained by the criteria they used to build the reference architecture for each software system. They use the folder structure from the source of the software system to determine the modules in the architecture reference. In our work, the reference architecture is defined a priori, and the graphs are synthesized ro reduce the dependencies between modules.
+	The results disagree with conclusions from Wu, Hassah, and Holt \cite{Wu2005}. They have concluded that the SL algorithms outperform ACDC, which outperforms Bunch, which outperforms the CL algorithms. The disagreement probably can be explained by the criteria they used to build the reference architecture for each software system. They use the folder structure from the source of the software system to determine the modules in the architecture reference. In our work, the reference architecture is defined a priori, and the graphs are synthesized to reduce the dependencies between modules.
 	
 	We should note that this experiment suffers from sampling bias. Although all analyzeds graphs are software-realistic, we can not guarantee that it is representative of all software systems. We see this analysis as complementary to similar experiments, that suffer from other types of bias \cite{Wu2005,Bittencourt2009,Andritsos2005}.
 	
@@ -525,7 +519,7 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 	    \hline
 	  \end{tabular}
 	  \end{center}
-	  \caption{Intervalo de confiança de 95\% para a diferença de desempenho de cada algoritmo, medido em MoJoSim, entre a configuração \emph{simples} e a configuração \emph{dupla} do parâmetro G.}
+	  \caption{95\% confidence interval for the performance difference for each algorithm, measured by MoJoSim, between uni- and bidirectional intermodule dependencies.}
 	  \label{tab:exp-dependencies}
 	\end{table*}
 	
@@ -547,7 +541,7 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{section}{TODO: Other Possible Sections}
+\begin{section}{Other Possible Sections}
 	Discussion
 	
 	Limitations: selection bias for training the classifier. selection bias for synthesized graphs.
@@ -559,6 +553,9 @@ We propose a classifier, based on triad concentration profiles, that, given a gr
 	Acknowledgments
 	
 	References	
+	
+	\TODO Publish the benchmark as a SQLite database, along with documentation and scripts.
+	
 \end{section}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
