@@ -79,7 +79,7 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 		\begin{itemize}
 			\item Software clustering algorithms. ACDC, Bunch, Hierarchical.
 			\item Software dependency graphs.
-			\item Evaluation of software clustering algorithms (authoritativeness criterium).
+			\item Evaluation of software clustering algorithms (authoritativeness criterion).
 			\item Comparison between architectures (MoJoSim metric).
 			\item Related work: package dependencies, random graphs, evaluating clustering algorithms with the LFR model.
 		\end{itemize}
@@ -396,7 +396,7 @@ $$
 
 \end{subsubsection}
 
-\begin{subsubsection}{Graph Synthesis and Evaluation}
+\begin{subsubsection}{Graph Synthesis and Evaluation} \label{sec:bcr-synthesis}
 	
 	For each parameter configuration, three graphs were synthesized, using distinct random seeds for each generation. Therefore, there were 28,500 synthetic graphs. Next, we classified each graph using the previously present graph classifier.
 
@@ -423,7 +423,34 @@ $$
 	\TODO Recap Bunch, ACDC, SL75, SL90, CL75, CL90; MoJo metric; experimental setup for evaluation of architecture recovery algorithms: given a dependency graph and a reference architecture, run the algorithm on the graph and compare the recovered architecture with the reference architecture.
 
 \begin{subsection}{Experimental Setup}
-	\TODO Section 6.3 from dissertation
+	With the objective of comparing architecture recovery algorithms and understand the factors that affect their performance (how well they recover the reference architecture), three experiments were performed:
+	
+	\begin{itemize}
+		\item the first one was aimed at comparing the performance of architecture recovery algorithms using the criterion of authoritativeness (how close the recovered architecture is from the reference architecture);
+		\item the second one was aimed at understanding how the performance of the algorithms is affected by graph characteristics;
+		\item the third one was aimed at assessing whether the presence of bidirectional intermodule dependencies poses a challenge to architecture recovery algorithms.
+	\end{itemize}
+	 
+	Because the methods and data used in the three experiments are similar, we describe them together. The experiments consist of the following steps:
+	
+	\begin{enumerate}
+		\item use BCR+ to synthesize graphs using many different parameter configurations;
+		\item apply architecture recovery algorithms to each synthetic graph;
+		\item measure the performance of the each algorithm in each graph (using the authoritativeness criterion);
+		\item analyze the results using statistics.
+	\end{enumerate}
+	
+	For the first step, we have used the synthetic graphs described in Section \ref{sec:bcr-synthesis}. The data set contains 28,500 graphs synthesized from 9,500 parameter configurations.
+	
+	We have chosen architecture recovery algorithms based on graph clustering that have free and publicly available implementations and that were studied by more than one author in papers about architecture recovery. By this criterion, we have selected the algorithms ACDC \TODO cite, Bunch, and hierarchical agglomerative clustering algorithms. For Bunch and ACDC, we used the default configurations provided by the original implementations provided by their respective creators.
+		
+	In the case of hierarchical algorithms, we have experimented with two linkage criteria---single-linkage (SL) and complete-linkage (CL)--and two height cutoff values---75\% and 90\%. There are, thus, 4 configurations for the hierarchical agglomerative algorithm, that will be referred as SL75, SL90, CL75, and CL90. These are the configurations studied by Anquetil in several papers. \TODO cite
+	
+	To measure the similarity between clusterings, we have chosen the metric MoJoSim \TODO cite, that has been used in software clustering studies. MoJoSim measures, in a scale from 0.0 to 1.0, the effort needed to transform the recovered clustering into the reference clustering, where 1.0 means no effort (that is, the clusterings are identical).
+	
+	\TODO explain moves and joins
+	
+	Finally, we performed graphical analyses and hypothesis tests on the results. We have used non-parametric tests, because a preliminary analysis shows that the data are not normally distributed. In all experiments, the dependent variable is the performance (measured by MoJoSim) of a particular algorithm on the synthetic graphs.
 	
 \end{subsection}
 
@@ -434,7 +461,7 @@ $$
 	
 	We have selected for this experiment only the graphs that were classified as software-realistic, totalizing about 6,000 graphs. Then, each algorithm was applied to each one of the synthetic graphs, resulting in a set of clusters together with a mapping from the set of vertices to the set of clusters. The performance of the clusterings were measured with the metric MoJoSim.
 	
-	The Figure \ref{fig:exp-algorithms} shows a box plot of the MoJoSim values that were measured for each algorithm. The dashed lines indicate the maximum and minimum value from the data. Comparing the median performance of the algorithms, it is clear that ACDC presents the best performance, followed by Bunch, and then by the hierachical algorithms. These differences were verified to be significative by applying a paired Wilcoxon test ($\alpha = 0.05$), with Bonferroni correction to account for multiple hypothesis testing. Among the hierarchical algorithms, there was no evidence that their performances differ.
+	The Figure \ref{fig:exp-algorithms} shows a box plot of the MoJoSim values that were measured for each algorithm. The dashed lines indicate the maximum and minimum value from the data. Comparing the median performance of the algorithms, it is clear that ACDC presents the best performance, followed by Bunch, and then by the hierarchical algorithms. These differences were verified to be significative by applying a paired Wilcoxon test ($\alpha = 0.05$), with Bonferroni correction to account for multiple hypothesis testing. Among the hierarchical algorithms, there was no evidence that their performances differ.
 	
 	\begin{figure}[htbp]
 		\centering
@@ -467,7 +494,7 @@ $$
 	
 	As expected, all algorithms performed better when the proportion of external edges was smaller. \TODO is it true? Check experimental package
 	
-	A surprising result was found when analyzing the influence of the number of modules on the performance of the algorithms (see Figure \ref{fig:exp-number-modules}). While the performance of ACDC and Bunch are not influenced by the number of modules, the performance of the hierachical algorithms is worse when applied to graphs with more modules. In fact, the performance of such algorithms are comparable to the performance of ACDC and Bunch when there are only two modules, but it gets  progressively worse as the number of modules grows.
+	A surprising result was found when analyzing the influence of the number of modules on the performance of the algorithms (see Figure \ref{fig:exp-number-modules}). While the performance of ACDC and Bunch are not influenced by the number of modules, the performance of the hierarchical algorithms is worse when applied to graphs with more modules. In fact, the performance of such algorithms are comparable to the performance of ACDC and Bunch when there are only two modules, but it gets  progressively worse as the number of modules grows.
 	
 	\begin{figure}[htbp]
 		\centering
@@ -476,7 +503,7 @@ $$
 		\label{fig:exp-number-modules}
 	\end{figure}
 	
-	A possible explanation for this phenomenom can be found in the distribution of module sizes found by hierarchical algorithms. It is common that they found large modules, sometimes covering more than half of the vertices \cite{Wu2005}. If the reference architecture contains many smaller modules, large modules found by an algorithm are severely penalyzed by the MoJoSim metric (the large modules need to be split in smaller modules, which is accounted in MoJoSim as a sequence of vertex movimentations).
+	A possible explanation for this phenomenon can be found in the distribution of module sizes found by hierarchical algorithms. It is common that they found large modules, sometimes covering more than half of the vertices \cite{Wu2005}. If the reference architecture contains many smaller modules, large modules found by an algorithm are severely penalized by the MoJoSim metric (the large modules need to be split in smaller modules, which is accounted in MoJoSim as a sequence of vertex movements).
 	
 \end{subsection}
 
@@ -495,9 +522,9 @@ $$
 	
 	As far as we know, BCR+ is the only graph model that can be used to conduct this type of experiment. Other graph models do not offer control over specific dependencies.
 	
-	For the remaining parameters of BCR+, when considered the values described in Section XXX. For each configuration of parameters, three graphs were synthesized, totalizing 11,400 graphs. Then, each architecure recovery algorithm was applied to each graph. Finally, the performance was computed, using the metric MoJoSim.
+	For the remaining parameters of BCR+, when considered the values described in Section XXX. For each configuration of parameters, three graphs were synthesized, totalizing 11,400 graphs. Then, each architecture recovery algorithm was applied to each graph. Finally, the performance was computed, using the metric MoJoSim.
 	
-	The results are shown in a boxplot in Figure \ref{fig:exp-dependencies}. It can be observed that all algorithms performed slightly better on the graph with the unidirectional edge. All differences---except that of CL75---are significative at 5\% level, as assessed with the paired Wilcoxon test.
+	The results are shown in a box plot in Figure \ref{fig:exp-dependencies}. It can be observed that all algorithms performed slightly better on the graph with the unidirectional edge. All differences---except that of CL75---are significative at 5\% level, as assessed with the paired Wilcoxon test.
 	
 	\begin{figure*}[htbp]
 		\centering
