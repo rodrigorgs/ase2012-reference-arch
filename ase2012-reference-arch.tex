@@ -1,12 +1,17 @@
 % vim: tw=78 encoding=utf8 ts=2 sw=2 expandtab softtabstop=2
 \documentclass[11pt,twocolumn,a4paper,english]{article}
 
-% textmate: cmd+shift+;, change language to english, cmd+option+; (twice)
+% Evaluation of software clustering algorithms is typically done by comparing the clustering results to an authoritative decomposition prepared manually by a system expert. (Shtern, Tzerpos - On the Comparability of Software Clustering Algorithms)
+
+% textmate: cmd+shift+; > change language to english > cmd+option+; (twice)
 
 \usepackage[utf8]{inputenc}
 \usepackage{babel}
 \usepackage{url}
 \usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{framed}
 \usepackage{anysize}
 \marginsize{1.7cm}{1.7cm}{1.7cm}{1.7cm}
 
@@ -77,7 +82,7 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 	\begin{itemize}
 		\item Architecture recovery (or discovery, or reconstruction). 
 		\begin{itemize}
-			\item Software clustering algorithms. ACDC, Bunch, Hierarchical.
+			\item Fully automated software clustering algorithms. ACDC, Bunch, Hierarchical.
 			\item Software dependency graphs.
 			\item Evaluation of software clustering algorithms (authoritativeness criterion).
 			\item Comparison between architectures (MoJoSim metric).
@@ -93,6 +98,30 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 			\item Triad concentration profiles. TCPs as signature for a domain. TCPs in software. 
 		\end{itemize}
 	\end{itemize}
+
+	\begin{subsection}{Triad Concentration Profiles}
+
+		Before presenting the graph classifier, we introduce the concept of triads and triad concentration profiles. Given three vertices, one can conceive 13 distinct connected directed graphs---the so-called triads---, as shown in Figure \ref{fig:triads}. By counting how often each triad appears in a graph, one can build a 13-dimension vector that is called the triad concentration profile for that particular graph. % it's like the signature for a graph.
+
+		\begin{figure*}[htbp]
+			\centering
+				\includegraphics[scale=1]{figures/triads}
+			\caption{All triads---connected directed graphs with three vertices---, numbered from 1 to 13.}
+			\label{fig:triads}
+		\end{figure*}
+
+		Previous work has shown that graphs from the same domain tend to be characterized by similar triad concentration profiles \cite{Milo2002}. For example, Figure \ref{fig:triads}(a) presents triad concentration profiles for two software dependency graphs, whereas Figure \ref{fig:triads}(b) presents triad concentration profiles for graphs in distinct domains: a software dependency graph and a linguistic graph. An informal analysis reveals that the similarity between the profiles is greater in the first case. It should suffice to notice that, in the second case, the concentration of the first two triads is somewhat reversed (in the linguistic graph, the second triad is the most frequent).
+
+		\begin{figure*}[htbp]
+			\centering
+				\includegraphics[scale=1]{figures/tcp}
+			\caption{Comparison between triad concentration profiles for three distinct graphs (computed with the igraph tool \cite{igraph}). (a) Class dependency graphs for two softwares: JabRef, version 2.5b2 (left) and ArgoUML version 0.28 (right). (b) Graph for JabRef, version 2.5b2 (left), and graph of word succession in a sample of Japanese texts (right) \cite{Milo2004}.}
+			\label{fig:tcp}
+		\end{figure*}
+
+		Many authors \cite{Milo2004,Ma2007,Lin2008} have explored triad concentration profiles as a means to find clusters of structurally similar graphs. The results suggest that such profiles can be effectively used to identify groups of graphs from the same domain (e.g., social, linguistic, biologic etc.).
+
+	\end{subsection}
 
 	
 \end{section}
@@ -132,55 +161,65 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{section}{Software-Realism}
+\begin{section}{Software-Realism Classifier}
 	% Motifs / Triads. Triad concentration profiles.
 	% Software-realism metric.
 	% Software-realism classifier. Training and testing the classifier.
 	% Software-realism for the BCR+ model. (Cite previous paper, where we also evaluate software-realism for three other models)
 
-	If synthetic graphs are to be used as surrogates to dependency graphs extracted from the source code of software systems, it is expected that they resemble such graphs. The property of a graph to resemble software dependency graphs is what we call software-realism. Hence, we seek to prove that BCR+ produces software-realistic graphs.
+	If synthetic graphs are to be used as surrogates to dependency graphs extracted from the source code of software systems, it is expected that they resemble such graphs. The property of a graph to resemble software dependency graphs is what we call software-realism. Hence, we seek a method to determine whether any given graph is software-realistic. %Hence, we seek to prove that BCR+ produces software-realistic graphs.
 	
-	To this end, we propose a graph classifier---based on the concept of triad concentration profiles---that, given a graph, outputs whether it is software-realistic or not (i.e., whether it is likely that the graph represents dependencies in a software system). Then, we show that this classifier presents high precision and high recall. Finally, we conclude that, with a suitable configuration of parameters, BCR+ is able to synthesize software-realistic graphs, indistinguishable from software dependency graphs.
+	To this end, we propose a software-realism classifier that, given a graph, outputs whether it is software-realistic or not (i.e., whether it is likely that the graph represents dependencies in a software system). Then, we show that this classifier presents high precision and high recall, and thus is able to discriminate between both classes of graphs. %Finally, we conclude that BCR+ is able to synthesize software-realistic graphs, indistinguishable from software dependency graphs.
 		
-\begin{subsection}{Triad Concentration Profiles}
-	
-	Before presenting the graph classifier, we introduce the concept of triads and triad concentration profiles. Given three vertices, one can conceive 13 distinct connected directed graphs---the so-called triads---, as shown in Figure \ref{fig:triads}. By counting how often each triad appears in a graph, one can build a 13-dimension vector that is called the triad concentration profile for that particular graph. % it's like the signature for a graph.
+\begin{subsection}{Method}
 
-	\begin{figure*}[htbp]
-		\centering
-			\includegraphics[scale=1]{figures/triads}
-		\caption{All triads---connected directed graphs with three vertices---, numbered from 1 to 13.}
-		\label{fig:triads}
-	\end{figure*}
-	
-	Previous work has shown that graphs from the same domain tend to be characterized by similar triad concentration profiles \cite{Milo2002}. For example, Figure \ref{fig:triads}(a) presents triad concentration profiles for two software dependency graphs, whereas Figure \ref{fig:triads}(b) presents triad concentration profiles for graphs in distinct domains: a software dependency graph and a linguistic graph. An informal analysis reveals that the similarity between the profiles is greater in the first case. It should suffice to notice that, in the second case, the concentration of the first two triads is somewhat reversed (in the linguistic graph, the second triad is the most frequent).
+In order to build a classifier to discriminate between software-realistic and non software-realistic graphs, we have to chose properties from graphs that can help in such distinction. We have chosen triad concentration profiles, because previous literature suggests that specific patterns in such profiles correspond to well-defined problem domains \cite{Milo2004}.
 
-	\begin{figure*}[htbp]
-		\centering
-			\includegraphics[scale=1]{figures/tcp}
-		\caption{Comparison between triad concentration profiles for three distinct graphs (computed with the igraph tool \cite{igraph}). (a) Class dependency graphs for two softwares: JabRef, version 2.5b2 (left) and ArgoUML version 0.28 (right). (b) Graph for JabRef, version 2.5b2 (left), and graph of word succession in a sample of Japanese texts (right) \cite{Milo2004}.}
-		\label{fig:tcp}
-	\end{figure*}
-	
-	Many authors \cite{Milo2004,Ma2007,Lin2008} have explored triad concentration profiles as a means to find clusters of structurally similar graphs. The results suggest that such profiles can be effectively used to identify groups of graphs from the same domain (e.g., social, linguistic, biologic etc.).
-			
-\end{subsection}
+Therefore, our classifier should take as input the triad concentration profile of a graph and output its more probable class (software-realistic or non software-realistic). We can formalize the classifier as a function with one binary output:
 
-\begin{subsection}{Graph Classifier}
+$$
+  \mathrm{S}(t_1, \ldots, t_{13}) = \left\{ \begin{array}{rl}
+	 1 &\mbox{ if software-realistic} \\
+	 0 &\mbox{ otherwise,}
+	       \end{array} \right.
+$$
+where $t_1, \ldots, t_{13}$ are the relative frequencies of the 13 triads in the input graph, i.e., the triad concentration profile for the graph.
 
-We propose a classifier, based on triad concentration profiles, that, given a graph, determine if it is software-realistic (i.e., if it is likely to be a software dependency graph). In other words, we consider two classes of graphs---software-realistic and non software-realistic---, and build a model that determines the class of any given graph. 
+We have chosen to use a supervised learning method in order to build the classifier. This way, the classifier is trained by being supplied with instances of graphs from both classes. Because the software-realism is not an objective property of a graph, we we have chosen to treat any software dependency graph as software-realistic, and any graph from other domains as non software-realistic.
 
-The classifier is developed by training a logistic regression model on a data set containing both software and non-software graphs. We show that it is capable of correctly classifying most graphs.
+The supervised learning method we have chosen was the logistic regression classifier, due to its simplicity. The model for a logistic regression classifier is based on the sigmoid function:
+
+$$
+	\mathrm{f}(t_1, \ldots, t_{13}) = \frac{1}{1 + e^{-z}}\mathrm{,}
+$$
+where $z$ is given by
+
+$$
+  z = \alpha_0 + \alpha_1t_1 + \cdots + \alpha_{13}t_{13}
+$$
+
+The function $\mathrm{f}$ yields the probability that the provided graph belongs to class 1 (software-realistic). A simple rounding is then used to transform this output in one of the classes ($\{0, 1\}$):
+
+$$
+\mathrm{S}(t_1, \ldots, t_{13}) = \left\{ \begin{array}{rl}
+ 1 &\mbox{ if } \mathrm{f}(t_1, \ldots, t_{13}) \ge 0.5 \\
+ 0 &\mbox{ otherwise}
+       \end{array} \right.
+$$
+% 
+% We propose a classifier, based on triad concentration profiles, that, given a graph, determine if it is software-realistic (i.e., if it is likely to be a software dependency graph). In other words, we consider two classes of graphs---software-realistic and non software-realistic---, and build a model that determines the class of any given graph. 
+% 
+% The classifier is developed by training a logistic regression model on a data set containing both software and non-software graphs. We show that it is capable of correctly classifying most graphs.
 
 \begin{subsubsection}{Data Set} \label{sec:data-set}
 	
-	In order to train our classifier, we have collected 131 graphs, including software dependency networks and graphs from other domains.
+	In order to train our classifier, we have collected 131 graphs, including 65 software dependency graphs (that were assumed to be software-realistic) and 66 graphs from other domains (that were assumed to not be software-realistic).
 	
 	We have collected 66 directed graphs that were made available by researchers working on domains such as biology, sociology, technology, and linguistics. The size of these graphs range from 32 to 18,163 vertices. The complete list of graphs can be found in Appendix A. \TODO Create Appendix
 	
 	Also, we have collected 65 open source software systems written in Java and listed at SourceForge.net\footnote{\url{http://sourceforge.net/about}} among the most popular as of 2008. From each software system one dependency graph was extracted, as follows.
 	
-	The archive for each software system contained one or more JAR files (Java Archive), containing object code for each class or interface. Some JAR files were generic libraries used by the systems; these files were removed from the extraction, as they are not really part of the software and are not considered by architecture recovery algorithms.
+	The archive for each software system contained one or more JAR files (Java Archive), containing object code for each class or interface. Some JAR files were generic libraries used by the systems; these files were removed from the extraction, as they are not really part of the software.
 	
 	Then, we used the tool Dependency Finder\footnote{\url{http://depfind.sf.net/}} in order to extract dependencies between classes (or interfaces) from the remaining JAR files. This particular tool was chosen because of the ease of use from the command-line, enabling its integration in scripting environments. We believe that any other tool with the same purpose would produce similar outputs.
 	
@@ -198,17 +237,16 @@ The classifier is developed by training a logistic regression model on a data se
 		
 	First, we trained the logistic regression model on the full data set with 131 graphs. After the training, the logistic regression classifier was tested on the same 131 graphs, being able to correctly classify 129 of them. Of course, this result is not an accurate estimation of the performance of the classifier, since the same data set was used for training and for testing.
 	
-	In order to assess how well the graph classification could perform on an independent data set, we used the method of 10-fold stratified cross-validation. In this method, the data set is split randomly in 10 folds (or partitions). The folds are stratified, that is, in each fold, the distribution of classes should match approximately that of the full data set. In our data set, it means that each fold should contain approximately $\frac{65}{131} = 49.6\%$ of software-realistic graphs. 
+	In order to assess how well the graph classification could perform on an independent data set, we used the method of 10-fold stratified cross-validation. In this method, the data set is first split randomly in 10 folds (or partitions). The folds are stratified, that is, in each fold, the distribution of classes should match approximately that of the full data set. In our data set, it means that each fold should contain approximately $\frac{65}{131} = 49.6\%$ of software-realistic graphs. 
 	
-	The cross-validation is performed in 10 iterations. In each iteration, one fold is chosen as the test set, and the remaining ones, combined, form the training set. This way, in each iteration, a classifier is trained on 90\% of the data set and trained  on the other 10\%. It should be noted that each object (in our case, graph) is used exactly once for testing. Because of this, we can compare the real and the predicted class for each object, and then compute standard performance metrics such as precision and recall. 
+	The cross-validation is performed in 10 iterations. In each iteration, one fold is chosen as the test set, and the remaining ones, combined, form the training set. This way, in each iteration, a classifier is trained on 90\% of the data set and tested on the other 10\%. It should be noted that each data set instance is used exactly once for testing. Because of this, we can compare the real and the predicted class for each instance, and then compute standard performance metrics such as precision and recall. 
 	
 	Let $S$ be the set of all software-realistic graphs from our data set (that is, all graphs that were extracted from software systems), and let $L$ bet the set of networks predicted by the classifier to be software-realistic. The precision is, then, given by
 	
 	$$
 	\mathrm{precision}: ~\frac{|S \cap L|}{|L|},
 	$$
-	
-	and the recall is given by
+and the recall is given by
 	
 	$$
 	\mathrm{recall}: ~\frac{|S \cap L|}{|S|}.
@@ -220,15 +258,44 @@ The classifier is developed by training a logistic regression model on a data se
 
 \begin{subsubsection}{Results}
 	
-	We evaluated the precision and recall of the graph classifier using the previously explained 10-fold cross-validation method. We obtained 92.6\% precision and 96.9\% recall.
+	We evaluated the precision and recall of the graph classifier using the previously explained 10-fold cross-validation method, obtaining 92.6\% precision and 96.9\% recall. The high values suggest that the classifier is able to identify most software dependency graphs and also that it misclassifies only few graphs.
+
+\begin{framed}
+The software-realism classifier is very accurate, with 92.6\% precision and 96.9\% recall.	
+\end{framed}
+	
+% \fbox{
+% \parbox{0.85\linewidth}{
+% }
+% }
 	
 	The model is the following:
-$$	
-	Predicted\_Class(T) = G(0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10} -138.36t_{12} - 843.11t_{13}),
-$$
+% 
+% \begin{framed}
+% 	\begin{array}{rl}
+% 	 z = & 0.09 \\
+% 	     & + 6.67t_1 \\
+% 	     & - 10t_2 \\
+% 	     & - 9.46t_3 \\
+% 	     & + 5.73t_5 \\
+% 	     & + 40.3t_6 \\
+% 	     & + 23.45t_7 \\
+% 	     & - 157.7t_{10} \\ 
+% 	     & - 138.36t_{12} \\
+% 	     & - 843.11t_{13}\mathrm{,}
+% 	\end{array}
+% 	
+% \end{framed}
 
-	where G is the sigmoid function. When the value of the function is greater than 0.5, the graph is classified as software-realistic, otherwise, it is classified as non software-realistic.
-		
+
+\begin{framed}
+$z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10} -138.36t_{12} - 843.11t_{13}$
+\end{framed}
+% where $t_i$ is the relative frequency of the $i$-th triad. 
+	
+	The results show that we can determine with high confidence whether a graph is software-realistic by looking at its triad concentration profile (to be precise, by looking at the concentration of 9 out of the 13 triads). The implications are that synthetic graphs can be used in studies that rely on software dependency graphs, as long as the synthetic graphs are classified as software-realistic.
+
+
 \end{subsubsection}
 
 \end{subsection}
@@ -243,14 +310,20 @@ $$
 	\newcommand{\gin}[0]{\ensuremath{\mathrm{d}_{in}}}
 	\newcommand{\gout}[0]{\ensuremath{\mathrm{d}_{out}}}
 	
-	When designing the architecture of a software system, the module viewpoint plays a major role, by specifying the modules of the system and their inter-relationships. Constraining such dependencies benefits the maintenability, portability, and reusability of the software system.
+	When designing the architecture of a software system, the module viewpoint plays a major role, by specifying the modules of the system and their inter-relationships. Constraining such dependencies benefits the maintainability, portability, and reusability of the software system.
 	
 	In this section, we describe the BCR+ model for synthesizing graphs from a description of the module viewpoint of an arbitrary architecture --- that is, the modules and dependencies between modules. The BCR+ model produces---by means of the mechanisms of growth and preferential attachment---directed graphs that are both scale-free and segmented in modules.
+	
+	\TODO as far as we know it is the only graph model that takes module dependencies as input.
+	
+	Then, we evaluate graphs synthesized by BCR+ using the previously described software-realism classifier. We conclude that BCR+ is able to synthesize software-realistic graphs, indistinguishable from software dependency graphs. \TODO we should also argue in favor of its software-realism by saying that it produces scale-free graphs.
 	
 	\TODO there are other models, but they don't take architecture as input	
 	
 \begin{subsection}{Overview}
 	The BCR+ model is a generalization of a graph model proposed by Bollobás et al \cite{Bollobas2003}. The original model generates directed graphs that are scale-free. Our model extends the original by generating graphs in which the nodes are organized in modules, according to an modular architecture given as input.
+	
+	\TODO BCR+ is a growth model, can simulate the evolution of a software system subject to constraints in module interaction. See CSMR paper (extended version), pg 2, col 2, just before section B. 
 	
 	The BCR+ model takes the following parameters as input:
 	
@@ -260,7 +333,7 @@ $$
   \item base in-degree, $\din$;
   \item base out-degree, $\dout$.
   \item an directed graph representing dependencies between modules, $G$;
-  \item a constant, $\mu$, with $0,0 \le \mu \le 1,0$;
+  \item a constant, $\mu$, with $0.0 \le \mu \le 1.0$;
   \end{itemize}
   
 	The last two parameters are new in BCR+. The other ones are from the original model by Bollobás et al \cite{Bollobas2003}.
@@ -308,7 +381,7 @@ $$
 		\end{itemize}
 	\end{itemize}
 	
-	The rules 1, 2, and 3b come directly from the original model by Bollobás et al \cite{Bollobas2003}. The rule 3a was created in BCR+ to account for inter-module dependencies.
+	% The rules 1, 2, and 3b come directly from the original model by Bollobás et al \cite{Bollobas2003}. The rule 3a was created in BCR+ to account for inter-module dependencies.
 	
 	The choice of vertices to which add edges to is done according to preferential attachment. When we say that a vertex ``chosen according to $\mathrm{f}(x)$'', we mean that the probability of choosing the vertex $x$ is proportional to $\mathrm{f}(x)$:
 	
@@ -333,9 +406,7 @@ $$
 		  \item Rule 3b: with probability $1 - \mu$, $w$ is chosen among the vertices that are in the same module as $v$.
 		\end{itemize}
 	\end{itemize}
-	
-	\TODO BCR+ is a growth model, can simulate the evolution of a software system subject to constraints in module interaction. See CSMR paper (extended version), pg 2, col 2, just before section B. 
-	
+		
 \end{subsection}
 
 \begin{subsection}{Example}
@@ -442,15 +513,23 @@ $$
 	
 	For the first step, we have used the synthetic graphs described in Section \ref{sec:bcr-synthesis}. The data set contains 28,500 graphs synthesized from 9,500 parameter configurations.
 	
-	We have chosen architecture recovery algorithms based on graph clustering that have free and publicly available implementations and that were studied by more than one author in papers about architecture recovery. By this criterion, we have selected the algorithms ACDC \TODO cite, Bunch, and hierarchical agglomerative clustering algorithms. For Bunch and ACDC, we used the default configurations provided by the original implementations provided by their respective creators.
+	We have chosen architecture recovery algorithms based on graph clustering that have free and publicly available implementations and that were studied by more than one author in papers about architecture recovery. By this criterion, we have selected the algorithms ACDC \cite{Tzerpos2000}, Bunch \cite{Mancoridis1998}, and hierarchical agglomerative clustering algorithms \cite{Anquetil1999}. For Bunch and ACDC, we used the default configurations provided by the original implementations provided by their respective creators.
 		
-	In the case of hierarchical algorithms, we have experimented with two linkage criteria---single-linkage (SL) and complete-linkage (CL)--and two height cutoff values---75\% and 90\%. There are, thus, 4 configurations for the hierarchical agglomerative algorithm, that will be referred as SL75, SL90, CL75, and CL90. These are the configurations studied by Anquetil in several papers. \TODO cite
+	In the case of hierarchical algorithms, we have experimented with two linkage criteria---single-linkage (SL) and complete-linkage (CL)--and two height cutoff values---75\% and 90\%. There are, thus, 4 configurations for the hierarchical agglomerative algorithm, that will be referred as SL75, SL90, CL75, and CL90. These are the configurations studied by Anquetil  \cite{Anquetil1999,Anquetil2003} and then reproduced by others (e.g., \cite{Wu2005}).
 	
-	To measure the similarity between clusterings, we have chosen the metric MoJoSim \TODO cite, that has been used in software clustering studies. MoJoSim measures, in a scale from 0.0 to 1.0, the effort needed to transform the recovered clustering into the reference clustering, where 1.0 means no effort (that is, the clusterings are identical).
+	To measure the similarity between clusterings, we have chosen the metric MoJoSim \cite{Bittencourt2009}, that has been used in software clustering studies. MoJoSim measures, in a scale from 0.0 to 1.0, the effort needed to transform the recovered clustering into the reference clustering, where 1.0 means no effort (that is, the clusterings are identical).
 	
-	\TODO explain moves and joins
+	The idea behind MoJoSim is that any clustering can be transformed into another by means of two operations: move and join. The move operation implies that one object is moved from its cluster to another cluster (existing or new). The join operation means that two clusters are joined together, giving rise to a new cluster that contains objects from both clusters. Note that there is no split operation: if a cluster is to be divided in two parts, this can be accomplished only by performing several moves.
 	
-	Finally, we performed graphical analyses and hypothesis tests on the results. We have used non-parametric tests, because a preliminary analysis shows that the data are not normally distributed. In all experiments, the dependent variable is the performance (measured by MoJoSim) of a particular algorithm on the synthetic graphs.
+	The count of moves and joins needed to transform the recovered clustering, $X$, to the reference clustering, $Y$ is called the MoJo between the clusterings. MoJoSim is computed by normalizing MoJo to a 0.0---1.0 range:
+	
+	$$
+	\mathrm{MoJoSim}(X, Y) ~=~ 1 - \frac{\mathrm{MoJo}(X, Y)}{n}\mathrm{,}
+	$$
+	
+	where $n$ is the number of objects (vertices) in the clustering.
+	
+	Finally, we performed graphical analyses and hypothesis tests on the results. We have used non-parametric tests, because a preliminary analysis showed that the data are not normally distributed. In all experiments, the dependent variable is the performance (measured by MoJoSim) of a particular algorithm on the synthetic graphs.
 	
 \end{subsection}
 
@@ -459,7 +538,7 @@ $$
 	
 	The first experiment was aimed at comparing the performance of the algorithms when applied software-realistic graphs, measured by the similarity between the clusters found by the algorithms and the modules of the reference architecture.
 	
-	We have selected for this experiment only the graphs that were classified as software-realistic, totalizing about 6,000 graphs. Then, each algorithm was applied to each one of the synthetic graphs, resulting in a set of clusters together with a mapping from the set of vertices to the set of clusters. The performance of the clusterings were measured with the metric MoJoSim.
+	We have selected for this experiment only the graphs that were classified as software-realistic, totalizing 10,000 graphs. Then, each algorithm was applied to each one of the synthetic graphs, resulting in a set of clusters together with a mapping from the set of vertices to the set of clusters. The performance of the clusterings were measured with the metric MoJoSim.
 	
 	The Figure \ref{fig:exp-algorithms} shows a box plot of the MoJoSim values that were measured for each algorithm. The dashed lines indicate the maximum and minimum value from the data. Comparing the median performance of the algorithms, it is clear that ACDC presents the best performance, followed by Bunch, and then by the hierarchical algorithms. These differences were verified to be significative by applying a paired Wilcoxon test ($\alpha = 0.05$), with Bonferroni correction to account for multiple hypothesis testing. Among the hierarchical algorithms, there was no evidence that their performances differ.
 	
@@ -479,22 +558,21 @@ $$
 	
 \end{subsection}	
 
-\begin{subsection}{Algorithm Parameters Analysis}
+\begin{subsection}{Influence of the Number of Modules}
 	% Section 6.5 from dissertation
 	
-	In the next experiment, we tried to understand how the algorithms behave on a variety of situations---graphs with different number of modules, different proportions of external edges etc. We were able to control a number of graph properties by changing parameter values for the BCR+ model.
+	In the next experiment, we tried to understand how the algorithms behave on graphs with different number of modules. We were able to control the number of modules by changing the $G$ parameter for the BCR+ model.
 	
 	In this experiment, all graphs---both software-realistic and non software-realistic---were considered, in order to avoid the software-realism variable to bias the results.
 	
-	We have analyzed the influence of the number of modules and of the proportion of external edges on the performance of the algorithms. We have chosen these two properties because they map naturally to BCR+ parameters: number of modules is controlled by the input module graph, $G$, and proportion of external edges is controlled by the parameter $\mu$.
+	% We have analyzed the influence of the number of modules and of the proportion of external edges on the performance of the algorithms. We have chosen these two properties because they map naturally to BCR+ parameters: number of modules is controlled by the input module graph, $G$, and proportion of external edges is controlled by the parameter $\mu$.
 
-	\TODO explain that the sample is paired, that is, there are two graphs that differ only by $\mu$ (the other parameters are identical).
+	\TODO Move to experimental setup section?
+	Because we have full control over the parameter values, the graphs can be paired, so the effect of each parameter can be isolated. For example, let $G$ be a graph in our data set that was synthesized using $\mu = 0.4$ and arbitrary values for the other parameters. There is another graph in the data set, $G\prime$, that was synthesized using the same parameter values as $G$, except for $\mu = 0.6$. Any observed difference between $G$ and $G\prime$ can be solely attributed to $\mu$ and to random effects. It should be noted that such pairing would not be possible in traditional approaches.
+		
+	% As expected, all algorithms performed better when the proportion of external edges was smaller. % I already checked the experimental package and found it to be true
 	
-	\TODO this experiment is not possible with traditional approaches, since it depends on having control on the graphs properties.
-	
-	As expected, all algorithms performed better when the proportion of external edges was smaller. \TODO is it true? Check experimental package
-	
-	A surprising result was found when analyzing the influence of the number of modules on the performance of the algorithms (see Figure \ref{fig:exp-number-modules}). While the performance of ACDC and Bunch are not influenced by the number of modules, the performance of the hierarchical algorithms is worse when applied to graphs with more modules. In fact, the performance of such algorithms are comparable to the performance of ACDC and Bunch when there are only two modules, but it gets  progressively worse as the number of modules grows.
+	A surprising result was found when analyzing the influence of the number of modules on the performance of the algorithms (see Figure \ref{fig:exp-number-modules}). While the performance of ACDC and Bunch are not significantly influenced by the number of modules, the performance of the hierarchical algorithms is actually worse when applied to graphs with more modules. In fact, the performance of such algorithms are comparable to the performance of ACDC and Bunch when there are only two modules, but it gets  progressively worse as the number of modules grows.
 	
 	\begin{figure}[htbp]
 		\centering
@@ -529,7 +607,7 @@ $$
 	\begin{figure*}[htbp]
 		\centering
 			\includegraphics[scale=1]{figures/exp-dependencies}
-		\caption{Influence of the type of dependency between modules (unidirectional ou bidirectional) on the performance of each architecture recovery algorithm.}
+		\caption{Influence of the type of dependency between modules (unidirectional or bidirectional) on the performance of each architecture recovery algorithm.}
 		\label{fig:exp-dependencies}
 	\end{figure*}
 	
@@ -549,10 +627,12 @@ $$
 	  \caption{95\% confidence interval for the performance difference for each algorithm, measured by MoJoSim, between uni- and bidirectional intermodule dependencies.}
 	  \label{tab:exp-dependencies}
 	\end{table*}
-	
-	We conclude that, in general, the presence of modules with mutual, bidirectional dependencies, influences negatively the performance of the algorithms that were analyzed. The observed difference was small in our study with two modules, but we suspect that this difference can be greater on graphs with more modules and more bidirectional dependencies.
 
-	\TODO The conclusion should be that there is a difference, but the difference is not relevant because of its magnitude.
+	% We conclude that, in general, the presence of modules with mutual, bidirectional dependencies, influences negatively the performance of the algorithms that were analyzed. 
+	
+	The difference in performance is negligible, unlikely to be relevant in practical terms. Therefore, we conclude that the algorithms are robust with respect of mutual intermodule dependencies.
+	
+	% We conclude that, in general, the presence of modules with mutual, bidirectional dependencies, influences negatively the performance of the algorithms that were analyzed. The observed difference was small in our study with two modules, but we suspect that this difference can be greater on graphs with more modules and more bidirectional dependencies.
 	
 \end{subsection}
 
