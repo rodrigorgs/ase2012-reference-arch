@@ -50,8 +50,8 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 
 \begin{abstract}
 	As a software system evolves, its actual architecture may deviate from its original reference architecture. A better understanding of the actual architecture can be gained by applying architecture recovery algorithms to the source code of the system. Unfortunately, there is little knowledge regarding the quality of such algorithms, mostly because, in order to assess their accuracy, one needs updated, detailed architectures for a variety of software systems.
-	To overcome such problem, we propose a simulation model that synthesizes implementation-level dependency graphs that conform to the module view of any given reference architecture. We show, using observations from network theory, that the graphs are very similar to dependency graphs extracted from the source code of real software systems. 
-	Then, we synthesize thousands of graphs, in a controlled way, and use them as benchmarks for six well-known architecture recovery algorithms: ACDC, Bunch, SL75, SL90, CL75, and CL90. By comparing the given reference architectures with those recovered by the algorithms, we conclude that ACDC and Bunch outperform the alternatives, specially if the architecture contains more than a couple of modules.\end{abstract}
+	To overcome such problem, we propose a simulation model that synthesizes implementation-level dependency graphs that conform to the module view of any given reference architecture. We show, using observations from network theory, that these graphs are very similar to dependency graphs extracted from the source code of real software systems. 
+	Then, we synthesize thousands of graphs, in a controlled way, and use them as benchmarks for six well-known architecture recovery algorithms: ACDC, Bunch, SL75, SL90, CL75, and CL90. By comparing the given reference architectures with those recovered by the algorithms, we conclude that ACDC and Bunch outperform the alternatives, specially if the architecture contains more than a couple of modules. REVER EXPRESSAO.\end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +62,8 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 
 	\begin{itemize}
 		\item Recovery of reference architectures with the help of architecture recovery algorithms. 
-		\item One kind of architecture recovery algorithms are software clustering algorithms (graph-based).
+		\item One kind of architecture recovery algorithms are software clustering algorithms (graph-based),  used to
+recover module views.
 		\item Not enough knowledge about performance of such algorithms.
 		\item One reason: difficult to find documented architectures for a variety of different systems. Lack of benchmarks to test such algorithms.
 		\item We propose (and evaluate) a model that synthesize graphs resembling software dependency graphs in a systematic way.
@@ -71,16 +72,16 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 		\item Structure of this paper. (First we devise a classifier do determine whether a graph is software-realistic)
 	\end{itemize}
 		
-	Architecture recovery algorithms have been used as a starting point to recover the reference architecture of a system family (Recovery of a Reference Architecture: A case study, by Eixelsberger / Architecture Recovery for Product Families, by Pinzger et al / Enhancing Domain-Specific Software Architecture Recovery, by Ivkovic and Godfrey) 
+Architecture recovery algorithms have been used as a starting point to recover the reference architecture of a system family (Recovery of a Reference Architecture: A case study, by Eixelsberger / Architecture Recovery for Product Families, by Pinzger et al / Enhancing Domain-Specific Software Architecture Recovery, by Ivkovic and Godfrey) 
 	([LIMBO] Improving the build architecture of legacy C/C++ software systems, by Dayani-Fard et al / [Bunch] ).
 	
-	One such kind of algorithms are the software clustering algorithms. They help to recover the module viewpoint of an architecture. They tend to find high cohesive clusters with low coupling between clusters. However, little is known about the performance of such algorithms on software. 
+	One such kind of algorithms are the software clustering algorithms. They have been used mostly to recover module views of an architecture, that is, architectural documentation that comprises modules and their relationships [CITE]. These algorithms tend to find high cohesive clusters with low coupling between clusters. However, little is known about the performance of such algorithms on software. 
 	
 \end{section}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{section}{Background and Related Work}
+\begin{section}{Background and Related Work} \label{sec:back}
 	\TODO Introductory paragraph. Why architecture recovery is important to our work. Why network theory is important.
 	
 	% \begin{itemize}
@@ -106,18 +107,25 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 \begin{subsection}{Architecture Recovery}
 	
 	Software architecture recovery---also known as software architecture discovery/reconstruction---is a branch of reverse engineering that seeks tools, methods, and techniques to infer the architecture (or parts of it) for a software system by analyzing artifacts such as source code or execution traces.
+%
+%When designing the architecture of a software system, the module viewpoint plays a major role, by specifying the modules of the system and their inter-relationships. Constraining such dependencies benefits the maintainability, portability, and reusability of the software system.	
 	
 	There are many kinds of architecture recovery tools and techniques. For an overview, we refer the reader to a taxonomy by Pollet and colleagues \cite{Pollet2007}.
+In this paper, we are interested in software clustering algorithms that work on design extracted from source code through static analysis
+to recover module views. 
+Automated tools take as input a graph representing dependencies between source code entities (e.g., classes in a object-oriented software), and outputs a clustering of the entities (i.e., a set of clusters, so that each entity belongs in exactly one cluster). Each cluster can be interpreted as a module in the recovered architecture and the set of clusters can be regarded as a recovered module view of the implementation [CITE]. REVISAR.
+
+	The recovered architecture seldom matches exactly the actual architecture. Nevertheless, it can be used a starting point to identify the actual modules and the entities that belong in each module. 
+%
+	An important criterion, therefore, to evaluate a software clustering algorithm is to what extent it produces clusterings that resemble the actual architectures of the systems being analyzed. Some authors call this criterion \textit{authoritativeness} [CITE].
 	
-	In this paper, we are interested in software clustering algorithms: automated tools that take as input a graph representing dependencies between source code entities (e.g., classes in a object-oriented software), and outputs a clustering of the entities (i.e., a set of clusters, so that each entity belongs in exactly one cluster). Each cluster can be interpreted as a module in the recovered architecture.
+	There are two issues that should be handled when performing authoritativeness evaluations:
+the quantitative comparison of the recovered architecture with the reference architecture, and 
+the identification of systems with updated and high-quality architecture information to be used as authoritative clustering.
 	
-	Of course, the recovered architecture seldom matches exactly the actual architecture. Nevertheless, it can be used a starting point to identify the actual modules and the entities that belong in each module. 
-	
-	An important criterion, therefore, to evaluate a software clustering algorithm is to what extent it produces clusterings that resemble the actual architectures of the systems being analyzed. Some authors call this criterion authoritativeness.
-	
-	There are two issues that should be handled when performing authoritativeness evaluations. The first one is how to quantitatively compare the recovered architecture with the reference architecture. In this research, we use MoJo.
-	
-	To measure the similarity between clusterings, we have chosen the metric MoJoSim \cite{Bittencourt2009}, that has been used in software clustering studies. MoJoSim measures, in a scale from 0.0 to 1.0, the effort needed to transform the recovered clustering into the reference clustering, where 1.0 means no effort (that is, the clusterings are identical).
+	In this research, to tacle the first issue, that is, to quantitatively compare the recovered architecture with the reference architecture, we use MoJo [Tzerpos AND Holt]. To measure the similarity between clusterings, we use MoJoSim \cite{Bittencourt2009}.
+%, a metric that has been used in software clustering studies. 
+MoJoSim measures, in a scale from 0.0 to 1.0, the effort needed to transform the recovered clustering into the reference clustering, where 1.0 means no effort (that is, the clusterings are identical).
 	
 	The idea behind MoJoSim is that any clustering can be transformed into another by means of two operations: move and join. The move operation implies that one object is moved from its cluster to another cluster (existing or new). The join operation means that two clusters are joined together, giving rise to a new cluster that contains objects from both clusters. Note that there is no split operation: if a cluster is to be divided in two parts, this can be accomplished only by performing several moves.
 	
@@ -128,46 +136,47 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 	$$
 where $n$ is the number of objects (vertices) in the clustering.
 	
-	The second issue is how to find systems which have updated and high-quality architecture information, ready to be used as authoritative clustering.
+	There are different approaches that address the second issue, that is, the identification of systems with updated and high-quality architecture information, ready to be used as authoritative clustering.
 	
 	The authoritative decomposition can be produced by a human architect, expert in the target system(s). High cost.
 	
 	Some studies use the structure of the source code folder as the authoritative architecture \cite{Bittencourt2009,Wu2005}.
 	
-	Other studies produce random graphs \cite{Mitchell2007}. As the network science shows, random graphs are not realistic representations of software systems (see next section).
+	Other studies produce random graphs \cite{Mitchell2007}.  As the network science shows, random graphs are not realistic representations of software systems (see next section).
 	
 \end{subsection}
 
 \begin{subsection}{Network Theory}
 	
-	Network theory (or network science) is an interdisciplinary field	concerned with the study of networks (i.e., sets of interconnected objects). It does so by combining knowledge from statistics, physics, computer science, social network analysis and many other disciplines.
+	Network theory (or network science) is an interdisciplinary field concerned with the study of networks (i.e., sets of interconnected objects). It does so by combining knowledge from statistics, physics, computer science, social network analysis and many other disciplines.
 
-	Some authors distinguishing between networks and graphs, by using the term graph to mean an abstract, formal representation of a network. However, this distinction is not universally accepted, so, for our purposes, graph and network can be used interchangeably.
+	Some authors distinguish between networks and graphs, by using the term graph to mean an abstract, formal representation of a network. However, this distinction is not universally accepted, so, for our purposes, graph and network can be used interchangeably.
 
 	\TODO Instead of one paragraph explaining all concepts, may define as they are used.
 	Some concepts from graph theory should be familiar to most readers with computer science background. A graph is a set of vertices and edges, where each vertex represents a relationship between two vertices. An edge can be either directed---meaning that there is an origin and a destination vertices---or undirected---meaning that the relationship between vertices is symmetrical. The degree of a vertex is the number of edges connected to it. The in-degree of a vertex is the number of edges that have the vertex as the destination (ingoing edges) and, similarly, the out-degree of a vertex is the number of edges that have the vertex as the origin (outgoing edges).
 
 \begin{subsubsection}{Degree Distribution}
-	One of the main results in network theory refers to the distribution of vertex degrees in commonly studied domains. Previously, it was believed that, in most domain, the interconnection of objects was normally distributed (or formally, that the distribution of vertex degree followed a normal distribution). According to this mindset, every people had approximately the same amount of friends---some more, some less, but the exact value oscillated around a mean value---, every webpage had approximately the same amount of links, and so on. 
-	
+	One of the main results in network theory refers to the distribution of vertex degrees in commonly studied domains. Previously, it was believed that, in most domains, %the interconnection of objects was normally distributed (or formally, that 
+the distribution of vertex degree followed a normal distribution.%). 
+According to this mindset, every person had approximately the same amount of friends---some more, some less, but the exact value oscillated around a mean value---, every webpage had approximately the same amount of links, and so on. 
+%	
 	This pattern can be approximated by the random graph model \cite{Erdos1959}. \TODO describe
 	
-	However, it was discovered that many graphs that emerge from the interaction between real-world objects---including friendship graphs, web graphs, protein interaction graphs, and many others---do not present normally distributed degrees. In the so-called scale-free graphs, the number of vertices connected to exactly $k$ other vertices---represented as $\mathrm{N}(k)$---is given by a power law, that is, $\mathrm{N}(k)$ is proportional to $k^{-\alpha}$, where $\alpha$ is a constant typically between 2 and 3.
+	However, % it was discovered that 
+	many graphs that emerge from the interaction between real-world objects---including friendship graphs, web graphs, protein interaction graphs, and many others---do not present normally distributed degrees [CITE]. In the so-called scale-free graphs, the number of vertices connected to exactly $k$ other vertices---represented as $\mathrm{N}(k)$---is given by a power law, that is, $\mathrm{N}(k)$ is proportional to $k^{-\alpha}$, where $\alpha$ is a constant typically between 2 and 3.
 	
 	Scale-free graphs have been found thoroughly in software artifacts. They have been found in UML diagrams \cite{Valverde2003}, function calls, aggregation and inheritance relationships in C and C++ programs \cite{Myers2003}, in implementation-level dependencies for programs written in Smalltalk and Java \cite{Marchesi2004,Concas2007,Hyland-Wood2006,Baxter2006,Ichii2008}, in dependencies between software packages \cite{Labelle2004} and between dynamic libraries \cite{Louridas2008} and in runtime references between objects \cite{Potanin2005}.	
 \end{subsubsection}
-	
-\begin{subsubsection}{Triad Concentration Profiles}
-	In addition to degree distribution, graphs can be characterized by triad concentration profiles. Given three vertices, one can conceive 13 distinct connected directed graphs---the so-called triads---, as shown in Figure \ref{fig:triads}. By counting how often each triad appears in a graph, one can build a 13-dimension vector that is called the triad concentration profile for that particular graph. % it's like the signature for a graph.
 
-	\begin{figure*}[htbp]
+	\begin{figure*}[tbp]
 		\centering
 			\includegraphics[scale=1]{figures/triads}
 		\caption{All triads---connected directed graphs with three vertices---, numbered from 1 to 13.}
 		\label{fig:triads}
 	\end{figure*}
-
-	Previous work has shown that graphs from the same domain tend to be characterized by similar triad concentration profiles \cite{Milo2002}. For example, Figure \ref{fig:triads}(a) presents triad concentration profiles for two software dependency graphs, whereas Figure \ref{fig:triads}(b) presents triad concentration profiles for graphs in distinct domains: a software dependency graph and a linguistic graph. An informal analysis reveals that the similarity between the profiles is greater in the first case. It should suffice to notice that, in the second case, the concentration of the first two triads is somewhat reversed (in the linguistic graph, the second triad is the most frequent).
+	
+\begin{subsubsection}{Triad Concentration Profiles}
+	In addition to degree distribution, graphs can be characterized by triad concentration profiles. Given three vertices, one can conceive 13 distinct connected directed graphs---the so-called triads---, as shown in Figure \ref{fig:triads}. By counting how often each triad appears in a graph, one can build a 13-dimension vector that is called the triad concentration profile for that particular graph. % it's like the signature for a graph.
 
 	\begin{figure*}[htbp]
 		\centering
@@ -175,6 +184,10 @@ where $n$ is the number of objects (vertices) in the clustering.
 		\caption{Comparison between triad concentration profiles for three distinct graphs (computed with the igraph tool \cite{igraph}). (a) Class dependency graphs for two softwares: JabRef, version 2.5b2 (left) and ArgoUML version 0.28 (right). (b) Graph for JabRef, version 2.5b2 (left), and graph of word succession in a sample of Japanese texts (right) \cite{Milo2004}.}
 		\label{fig:tcp}
 	\end{figure*}
+	
+	Previous work has shown that graphs from the same domain tend to be characterized by similar triad concentration profiles \cite{Milo2002}. For example, Figure \ref{fig:tcp}(a) presents triad concentration profiles for two software dependency graphs, whereas Figure \ref{fig:tcp}(b) presents triad concentration profiles for graphs in distinct domains: a software dependency graph and a linguistic graph. An informal analysis reveals that the similarity between the profiles is greater in the first case. It should suffice to notice that, in the second case, the concentration of the first two triads is somewhat reversed (in the linguistic graph, the second triad is the most frequent). EXPLICAR MELHOR.
+
+
 
 	Many authors \cite{Milo2004,Ma2007,Lin2008} have explored triad concentration profiles as a means to find clusters of structurally similar graphs. The results suggest that such profiles can be effectively used to identify groups of graphs from the same domain (e.g., social, linguistic, biologic etc.).
 \end{subsubsection}
@@ -227,7 +240,7 @@ where $n$ is the number of objects (vertices) in the clustering.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{section}{Software-Realism Classifier}
+\begin{section}{Software-Realism Classifier} \label{sec:sr}
 	% Motifs / Triads. Triad concentration profiles.
 	% Software-realism metric.
 	% Software-realism classifier. Training and testing the classifier.
@@ -251,9 +264,9 @@ $$
 $$
 where $t_1, \ldots, t_{13}$ are the relative frequencies of the 13 triads in the input graph, i.e., the triad concentration profile for the graph.
 
-We have chosen to use a supervised learning method in order to build the classifier. This way, the classifier is trained by being supplied with instances of graphs from both classes. Because the software-realism is not an objective property of a graph, we we have chosen to treat any software dependency graph as software-realistic, and any graph from other domains as non software-realistic.
+To build the classifier, a  supervised learning method is used; the classifier is trained by being supplied with instances of graphs from both software-realistic and non software-realistic classes. Because the software-realism is not an objective property of a graph, in our work we decided to treat any software dependency graph as software-realistic, and any graph from other domains as non software-realistic.
 
-The supervised learning method we have chosen was the logistic regression classifier, due to its simplicity. The model for a logistic regression classifier is based on the sigmoid function:
+The supervised learning method used was the logistic regression classifier, due to its simplicity. The model for a logistic regression classifier is based on the sigmoid function:
 
 $$
 	\mathrm{f}(t_1, \ldots, t_{13}) = \frac{1}{1 + e^{-z}}\mathrm{,}
@@ -279,15 +292,14 @@ $$
 
 \begin{subsubsection}{Data Set} \label{sec:data-set}
 	
-	In order to train our classifier, we have collected 131 graphs, including 65 software dependency graphs (that were assumed to be software-realistic) and 66 graphs from other domains (that were assumed to not be software-realistic).
+	In order to train our classifier, we have collected 131 graphs, including 65 software dependency graphs (software-realistic) and 66  directed graphs from other domains (non software-realistic).
 	
-	We have collected 66 directed graphs that were made available by researchers working on domains such as biology, sociology, technology, and linguistics. The size of these graphs range from 32 to 18,163 vertices. The complete list of graphs can be found in Appendix A. \TODO Create Appendix
+	The collected 66 non software-realistic graphs were made available by researchers working on domains such as biology, sociology, technology, and linguistics. The size of these graphs range from 32 to 18,163 vertices. The complete list of graphs can be found in Appendix A. \TODO Create Appendix
 	
 	Also, we have collected 65 open source software systems written in Java and listed at SourceForge.net\footnote{\url{http://sourceforge.net/about}} among the most popular as of 2008. From each software system one dependency graph was extracted, as follows.
 	
-	The archive for each software system contained one or more JAR files (Java Archive), containing object code for each class or interface. Some JAR files were generic libraries used by the systems; these files were removed from the extraction, as they are not really part of the software.
-	
-	Then, we used the tool Dependency Finder\footnote{\url{http://depfind.sf.net/}} in order to extract dependencies between classes (or interfaces) from the remaining JAR files. This particular tool was chosen because of the ease of use from the command-line, enabling its integration in scripting environments. We believe that any other tool with the same purpose would produce similar outputs.
+	The archive for each software system contained one or more JAR files (Java Archive), with object code for each class or interface. Some JAR files were generic libraries used by the systems; these files were removed from the extraction, as they are not really part of the software.
+To extract dependencies between classes (or interfaces) from the remaining JAR files, we used Dependency Finder\footnote{\url{http://depfind.sf.net/}}, a tool with command-line interface that enables its integration in scripting environments. %We believe that any other tool with the same purpose would produce similar outputs.
 	
 	The graphs that were extracted contain vertices representing Java classes and interfaces. The edges represent any reference from one class/interface to another in the object code, including inheritance, aggregation, method call, object instantiation and attribute read/write.
 	
@@ -370,13 +382,11 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{section}{The BCR+ Model}	
+\begin{section}{The BCR+ Model}	\label{sec:bcr}
 	\newcommand{\din}[0]{\ensuremath{\delta_{in}}}
 	\newcommand{\dout}[0]{\ensuremath{\delta_{out}}}
 	\newcommand{\gin}[0]{\ensuremath{\mathrm{d}_{in}}}
 	\newcommand{\gout}[0]{\ensuremath{\mathrm{d}_{out}}}
-	
-	When designing the architecture of a software system, the module viewpoint plays a major role, by specifying the modules of the system and their inter-relationships. Constraining such dependencies benefits the maintainability, portability, and reusability of the software system.
 	
 	In this section, we describe the BCR+ model for synthesizing graphs from a description of the module viewpoint of an arbitrary architecture --- that is, the modules and dependencies between modules. The BCR+ model produces---by means of the mechanisms of growth and preferential attachment---directed graphs that are both scale-free and segmented in modules.
 	
@@ -475,16 +485,16 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 		
 \end{subsection}
 
-\begin{subsection}{Example}
-	
-	To illustrate the behavior, of BCR+, we show in Figure \ref{fig:bcr-example} an example of one step of graph synthesis process. Suppose that we chose $G$ to be the four-module graph from Figure \ref{fig:bcr-initial-graph}, so the first step is to create one vertex for each module and then connect them according to the edges in $G$. 
-	
 \begin{figure*}[htbp]
 	\centering
 		\includegraphics[width=\textwidth]{figures/bcr-example}
 	\caption{One step of BCR+.}
 	\label{fig:bcr-example}
 \end{figure*}
+
+\begin{subsection}{Example} \label{sec:example}
+	
+	To illustrate the behavior of BCR+, we show in Figure \ref{fig:bcr-example} one step of graph synthesis process. Suppose that we chose $G$ to be the four-module graph from Figure \ref{fig:bcr-initial-graph}, so the first step is to create one vertex for each module and then connect them according to the edges in $G$. 
 	
 	Now, suppose that $\dout = 2$ and that rule 2 was chosen. In this case, a vertex must be chosen, and this choice must consider, for each vertex, $x$, the value of $\mathrm{f}(x) = \dout + \gout(x)$. In the figure, the value of $\mathrm{f}(x)$ for each vertex is represented by a number inside parentheses near the vertex (the number before the parentheses is simply $\gout(x)$, the out-degree of vertex $x$).
 	
