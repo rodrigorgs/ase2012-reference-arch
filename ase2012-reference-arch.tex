@@ -446,7 +446,7 @@ The BCR+ model is a generalization of the graph model proposed by Bollobás et a
 	\label{fig:bcr-rules}
 \end{figure}
 
-TALVEZ colocar a FIGURE 4 em 2 colunas, no topo da pagina.
+% TALVEZ colocar a FIGURE 4 em 2 colunas, no topo da pagina. (Rodrigo: prefiro não mexer nisso, o LaTeX tem mais facilidade de dispor as figuras em uma coluna só)
 	
 	There are three formation rules in BCR+. Each one modifies the output graph by adding or removing vertices or edges in the graph. Also, each formation rule has a probability of being applied, given by the parameters $p_1$, $p_2$ and $p_3$.
 The formation rules are illustrated in Figure \ref{fig:bcr-rules} and a simplified description of these rules is provided below:
@@ -592,9 +592,9 @@ Finally, results are discussed in Section~\ref{sec:exp:disc}.
 		\item analyze the results using statistics.
 	\end{enumerate}
 	
-	For the first step, we have used the synthetic graphs described in Section \ref{sec:bcr-synthesis}. The data set contains 28,500 graphs synthesized from 9,500 parameter configurations.
+	For the first step, we have used the synthetic graphs described in Section \ref{sec:bcr-synthesis}. The data set contained 28,500 graphs synthesized from 9,500 parameter configurations.
 	
-	We have chosen architecture recovery algorithms based on graph clustering that have free and publicly available implementations and that were studied by more than one author in papers about architecture recovery. By this criterion, we have selected the algorithms ACDC \cite{Tzerpos2000}, Bunch \cite{Mancoridis1998}, and hierarchical agglomerative clustering algorithms \cite{Anquetil1999}. For Bunch and ACDC, we used the default configurations provided by the original implementations provided by their respective creators.
+	We have chosen architecture recovery algorithms based on graph clustering that have free and publicly available implementations and that were studied by more than one author in papers about architecture recovery. By this criteria, we have selected the algorithms ACDC \cite{Tzerpos2000}, Bunch \cite{Mancoridis1998}, and hierarchical agglomerative clustering algorithms \cite{Anquetil1999}. For Bunch and ACDC, we used the default configurations from the original implementations provided by their respective creators.
 		
 	In the case of hierarchical algorithms, we have experimented with two linkage criteria---single-linkage (SL) and complete-linkage (CL)--and two height cutoff values---75\% and 90\%. There are, thus, 4 configurations for the hierarchical agglomerative algorithm, that will be referred as SL75, SL90, CL75, and CL90. These are the configurations studied by Anquetil  \cite{Anquetil1999,Anquetil2003} and then reproduced by others (e.g., \cite{Wu2005}).
 	
@@ -621,7 +621,7 @@ Finally, results are discussed in Section~\ref{sec:exp:disc}.
 	
 	We have selected for this experiment only the graphs that were classified as software-realistic, totalizing 10,000 graphs. Then, each algorithm was applied to each one of the synthetic graphs, resulting in a set of clusters together with a mapping from the set of vertices to the set of clusters. The performance of the clusterings were measured with the metric MoJoSim.
 	
-	The Figure \ref{fig:exp-algorithms} shows a box plot of the MoJoSim values that were measured for each algorithm. The dashed lines indicate the maximum and minimum value from the data. Comparing the median performance of the algorithms, it is clear that ACDC presents the best performance, followed by Bunch, and then by the hierarchical algorithms. These differences were verified to be significative by applying a paired Wilcoxon test ($\alpha = 0.05$), with Bonferroni correction to account for multiple hypothesis testing. Among the hierarchical algorithms, there was no evidence that their performances differ.
+	Figure \ref{fig:exp-algorithms} shows a box plot of the MoJoSim values that were measured for each algorithm. The dashed lines indicate the maximum and minimum value from the data. Comparing the median performance of the algorithms, it is clear that ACDC presents the best performance, followed by Bunch, and then by the hierarchical algorithms. These differences were verified to be significative by applying a paired Wilcoxon test ($\alpha = 0.05$), with Bonferroni correction to account for multiple hypothesis testing. Among the hierarchical algorithms, there was no evidence that their performances differ.
 	
 	\begin{figure}[htbp]
 		\centering
@@ -632,24 +632,21 @@ Finally, results are discussed in Section~\ref{sec:exp:disc}.
 	
 	Another noteworthy aspect of the data is the dispersion of values. The algorithm Bunch presents the smaller dispersion, with more than half of the values between 0.60 and 0.80 (minimum value = 0.45). In the case of ACDC, half of the values are between 0.65 a 0.85, but the minimum value is 0.01. This observation suggests that, although Bunch presents overall inferior performance when compared with ACDC, it can be a reasonable choice for yielding more predictable results.
 	
-	\TODO move to a discussion section.
-	The results disagree with conclusions from Wu, Hassah, and Holt \cite{Wu2005}. They have concluded that the SL algorithms outperform ACDC, which outperforms Bunch, which outperforms the CL algorithms. The disagreement probably can be explained by the criteria they used to build the reference architecture for each software system. They use the folder structure from the source of the software system to determine the modules in the architecture reference. In our work, the reference architecture is defined a priori, and the graphs are synthesized to reduce the dependencies between modules.
-	
-	We should note that this experiment suffers from sampling bias. Although all analyzeds graphs are software-realistic, we can not guarantee that it is representative of all software systems. We see this analysis as complementary to similar experiments, that suffer from other types of bias \cite{Wu2005,Bittencourt2009,Andritsos2005}.
+	We should note that this experiment suffers from sampling bias. Although all analyzed graphs are software-realistic, we can not guarantee that they are representative of all software systems. We see this analysis as complementary to similar experiments, that suffer from other types of bias \cite{Wu2005,Bittencourt2009,Andritsos2005}.
 	
 \end{subsection}	
 
 \begin{subsection}{Influence of the Number of Modules} \label{sec:exp2}
 	% Section 6.5 from dissertation
 	
-	In the next experiment, we tried to understand how the algorithms behave on graphs with different number of modules. We were able to control the number of modules by changing the $G$ parameter for the BCR+ model.
+	In the second experiment, we tried to understand how the algorithms behave on graphs with different number of modules. We were able to control the number of modules by changing the $G$ parameter for the BCR+ model.
 	
 	In this experiment, all graphs---both software-realistic and non software-realistic---were considered, in order to avoid the software-realism variable to bias the results.
-	
 	% We have analyzed the influence of the number of modules and of the proportion of external edges on the performance of the algorithms. We have chosen these two properties because they map naturally to BCR+ parameters: number of modules is controlled by the input module graph, $G$, and proportion of external edges is controlled by the parameter $\mu$.
 
-	\TODO Move to experimental setup section?
-	Because we have full control over the parameter values, the graphs can be paired, so the effect of each parameter can be isolated. For example, let $G$ be a graph in our data set that was synthesized using $\mu = 0.4$ and arbitrary values for the other parameters. There is another graph in the data set, $G\prime$, that was synthesized using the same parameter values as $G$, except for $\mu = 0.6$. Any observed difference between $G$ and $G\prime$ can be solely attributed to $\mu$ and to random effects. It should be noted that such pairing would not be possible in traditional approaches.
+%	\TODO Move to experimental setup section?
+In this experiment, an additional setup step was performed, besides those previously described (Section~\ref{sec:exp:setup}).
+Because we have full control over the parameter values, the graphs could be paired and the effect of each parameter could be isolated. For example, let $G$ be a graph in our data set that was synthesized using $\mu = 0.4$ and arbitrary values for the other parameters. There is another graph in the data set, $G\prime$, that was synthesized using the same parameter values as $G$, except for $\mu = 0.6$. Any observed difference between $G$ and $G\prime$ can be solely attributed to $\mu$ and to random effects. It should be noted that such pairing would not be possible in traditional approaches.
 		
 	% As expected, all algorithms performed better when the proportion of external edges was smaller. % I already checked the experimental package and found it to be true
 	
@@ -721,6 +718,12 @@ Finally, results are discussed in Section~\ref{sec:exp:disc}.
   % TODO: move to a new section
 	We have described three experiments based on the application of architecture recovery algorithms to synthetic graphs created by the model BCR+. The experiments present evidence that this approach is practicable and can be used to find insights about the algorithms that cannot be found with more traditional approaches.
 	
+	POR QUE ESSES 3 experimentos foram escolhidos? O que o segundo agrega ao primeiro? E o terceiro?
+	
+\paragraph{Comparison of architecture recovery algorithms results disagree with conclusions from previous work.} Our results disagree with conclusions from Wu, Hassah, and Holt \cite{Wu2005}. They have concluded that the SL algorithms outperform ACDC, which outperforms Bunch, which outperforms the CL algorithms. The disagreement probably can be explained by the criteria they used to build the reference architecture for each software system. They used the folder structure from the source of the software system to determine the modules in the architecture reference. In our work, the reference architecture is defined \textit{a priori}, and the graphs are synthesized to reduce the dependencies between modules.
+
+\paragraph{Full control over parameter values allowed parameters to be  isolated.} Discuss BENEFITS.
+	
 	\TODO more
 	
 \end{subsection}
@@ -729,21 +732,28 @@ Finally, results are discussed in Section~\ref{sec:exp:disc}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{section}{Other Possible Sections}
-	Discussion
+\begin{section}{Conclusions}
+
+Reference architectures play a role of paramount importance on systems development but they may not be available ...
+The architecture recovery algorithms that have been used to recover reference arch [CITAR] so far are difficult to evaluate ...specially because ...
+
+In the paper we have presented a ...
+
+General Discussion; Limitations: selection bias for training the classifier. selection bias for synthesized graphs.
+
+The results pointed out ...
 	
-	Limitations: selection bias for training the classifier. selection bias for synthesized graphs.
-	
+
 	Related work: evaluation of Bunch using random graphs. Lancichinetti's evaluation of clustering algorithms using his network model. Evaluation of architecture recovery algorithms by comparing recovered modules with packages that are explicit in source code. (TODO: maybe promote to 2nd section)
-	
-	Conclusion
-	
-	Acknowledgments
-	
-	References	
 	
 	\TODO Publish the benchmark as a SQLite database, along with documentation and scripts.
 	
+\end{section}
+
+\begin{section}{Acknowledgments}
+
+\TODO write.
+
 \end{section}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
