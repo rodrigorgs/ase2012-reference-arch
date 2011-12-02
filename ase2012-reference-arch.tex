@@ -42,6 +42,10 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 
 \TODO Display authors in a 2x2 matrix.
 
+\TODO Clustering = decomposition
+
+\TODO Stability and non-extremity can be objectively measured in automated ways. Authoritativeness cannot (it relies on the subjective authoritative decomposition)
+
 \TODO \textbf{Static} dependency graphs
 
 % \TODO Maybe put section ``The BCR+ Model'' after ``Software-Realism'' and before ``BCR+ Evaluation'', then move ``Triad Concentration Profiles'' to ``Background''. Maybe ``Related Work'' after ``Background''. The outline would become the following: Introduction, Background, (Related Work)?, Software-Realism, The BCR+ Model (includes description and evaluation), Evaluation of Architecture Recovery Algorithms.
@@ -51,7 +55,7 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 \begin{abstract}
 	As a software system evolves, its actual architecture may deviate from its original reference architecture. A better understanding of the actual architecture can be gained by applying architecture recovery algorithms to the source code of the system. Unfortunately, there is little knowledge regarding the quality of such algorithms, mostly because, in order to assess their accuracy, one needs updated, detailed architectures for a variety of software systems.
 	To overcome such problem, we propose a simulation model that synthesizes implementation-level dependency graphs that conform to the module view of any given reference architecture. We show, using observations from network theory, that these graphs are very similar to dependency graphs extracted from the source code of real software systems. 
-	Then, we synthesize thousands of graphs, in a controlled way, and use them as benchmarks for six well-known architecture recovery algorithms: ACDC, Bunch, SL75, SL90, CL75, and CL90. By comparing the given reference architectures with those recovered by the algorithms, we conclude that ACDC and Bunch outperform the alternatives, specially if the architecture contains more than a couple of modules. REVER EXPRESSAO.\end{abstract}
+	Then, we synthesize thousands of graphs, in a controlled way, and use them as benchmarks for six well-known architecture recovery algorithms: ACDC, Bunch, SL75, SL90, CL75, and CL90. By comparing the given reference architectures with those recovered by the algorithms, we conclude that ACDC and Bunch outperform the alternatives, specially if the architecture contains four or more modules.\end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,7 +79,7 @@ recover module views.
 Architecture recovery algorithms have been used as a starting point to recover the reference architecture of a system family (Recovery of a Reference Architecture: A case study, by Eixelsberger / Architecture Recovery for Product Families, by Pinzger et al / Enhancing Domain-Specific Software Architecture Recovery, by Ivkovic and Godfrey) 
 	([LIMBO] Improving the build architecture of legacy C/C++ software systems, by Dayani-Fard et al / [Bunch] ).
 	
-	One such kind of algorithms are the software clustering algorithms. They have been used mostly to recover module views of an architecture, that is, architectural documentation that comprises modules and their relationships [CITE]. These algorithms tend to find high cohesive clusters with low coupling between clusters. However, little is known about the performance of such algorithms on software. 
+	One such kind of algorithms are the software clustering algorithms. They have been used mostly to recover module views of an architecture, that is, architectural documentation that comprises modules and their relationships \cite{Clements2002}. These algorithms tend to find high cohesive clusters with low coupling between clusters. However, little is known about the performance of such algorithms on software. 
 	
 \end{section}
 
@@ -110,20 +114,19 @@ Architecture recovery algorithms have been used as a starting point to recover t
 %
 %When designing the architecture of a software system, the module viewpoint plays a major role, by specifying the modules of the system and their inter-relationships. Constraining such dependencies benefits the maintainability, portability, and reusability of the software system.	
 	
-	There are many kinds of architecture recovery tools and techniques. For an overview, we refer the reader to a taxonomy by Pollet and colleagues \cite{Pollet2007}.
-In this paper, we are interested in software clustering algorithms that work on design extracted from source code through static analysis
-to recover module views. 
-Automated tools take as input a graph representing dependencies between source code entities (e.g., classes in a object-oriented software), and outputs a clustering of the entities (i.e., a set of clusters, so that each entity belongs in exactly one cluster). Each cluster can be interpreted as a module in the recovered architecture and the set of clusters can be regarded as a recovered module view of the implementation [CITE]. REVISAR.
+	There are many kinds of architecture recovery tools and techniques. For an overview, we refer the reader to a taxonomy by Pollet and colleagues \cite{Pollet2007}. In this paper, we are interested in software clustering algorithms that work on design extracted from source code through static analysis to recover module views. 
+	
+Automated tools take as input a graph representing dependencies between source code entities (e.g., classes in a object-oriented software), and outputs a clustering of the entities (i.e., a set of clusters, so that each entity belongs in exactly one cluster). Each cluster can be interpreted as a module in the recovered architecture and the set of clusters can be regarded as a recovered module view of the implementation \cite{Mancoridis1998}.
 
 	The recovered architecture seldom matches exactly the actual architecture. Nevertheless, it can be used a starting point to identify the actual modules and the entities that belong in each module. 
 %
-	An important criterion, therefore, to evaluate a software clustering algorithm is to what extent it produces clusterings that resemble the actual architectures of the systems being analyzed. Some authors call this criterion \textit{authoritativeness} [CITE].
+	An important criterion, therefore, to evaluate a software clustering algorithm is to what extent it produces clusterings that resemble the actual architectures of the systems being analyzed. Some authors call this criterion \textit{authoritativeness} \cite{Wu2005,Bittencourt2009}.
 	
 	There are two issues that should be handled when performing authoritativeness evaluations:
 the quantitative comparison of the recovered architecture with the reference architecture, and 
 the identification of systems with updated and high-quality architecture information to be used as authoritative clustering.
 	
-	In this research, to tacle the first issue, that is, to quantitatively compare the recovered architecture with the reference architecture, we use MoJo [Tzerpos AND Holt]. To measure the similarity between clusterings, we use MoJoSim \cite{Bittencourt2009}.
+	In this research, to tackle the first issue, that is, to quantitatively compare the recovered architecture with the reference architecture, we use MoJo \cite{Tzerpos1999}. To measure the similarity between clusterings, we use MoJoSim \cite{Bittencourt2009}.
 %, a metric that has been used in software clustering studies. 
 MoJoSim measures, in a scale from 0.0 to 1.0, the effort needed to transform the recovered clustering into the reference clustering, where 1.0 means no effort (that is, the clusterings are identical).
 	
@@ -163,7 +166,7 @@ According to this mindset, every person had approximately the same amount of fri
 	This pattern can be approximated by the random graph model \cite{Erdos1959}. \TODO describe
 	
 	However, % it was discovered that 
-	many graphs that emerge from the interaction between real-world objects---including friendship graphs, web graphs, protein interaction graphs, and many others---do not present normally distributed degrees [CITE]. In the so-called scale-free graphs, the number of vertices connected to exactly $k$ other vertices---represented as $\mathrm{N}(k)$---is given by a power law, that is, $\mathrm{N}(k)$ is proportional to $k^{-\alpha}$, where $\alpha$ is a constant typically between 2 and 3.
+	many graphs that emerge from the interaction between real-world objects---including friendship graphs, web graphs, protein interaction graphs, and many others---do not present normally distributed degrees \cite{Newman2003}. In the so-called scale-free graphs, the number of vertices connected to exactly $k$ other vertices---represented as $\mathrm{N}(k)$---is given by a power law, that is, $\mathrm{N}(k)$ is proportional to $k^{-\alpha}$, where $\alpha$ is a constant typically between 2 and 3.
 	
 	Scale-free graphs have been found thoroughly in software artifacts. They have been found in UML diagrams \cite{Valverde2003}, function calls, aggregation and inheritance relationships in C and C++ programs \cite{Myers2003}, in implementation-level dependencies for programs written in Smalltalk and Java \cite{Marchesi2004,Concas2007,Hyland-Wood2006,Baxter2006,Ichii2008}, in dependencies between software packages \cite{Labelle2004} and between dynamic libraries \cite{Louridas2008} and in runtime references between objects \cite{Potanin2005}.	
 \end{subsubsection}
