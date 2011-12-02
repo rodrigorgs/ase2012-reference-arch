@@ -594,6 +594,8 @@ Finally, results are discussed in Section~\ref{sec:exp:disc}.
 	
 	For the first step, we have used the synthetic graphs described in Section \ref{sec:bcr-synthesis}. The data set contained 28,500 graphs synthesized from 9,500 parameter configurations.
 	
+	It should be noted that, because the data set follows a full factorial design (i.e., the configurations include all possible combinations of the selected values across all parameters), the graphs can be paired and the effect of each parameter can be isolated. For example, let $G$ be a graph in our data set that was synthesized using $\mu = 0.4$ and arbitrary values for the other parameters. There is another graph in the data set, $G\prime$, that was synthesized using the same parameter values as $G$, except for $\mu = 0.6$. Any observed difference between $G$ and $G\prime$ can be solely attributed to $\mu$ and to random effects. A full factorial design would not be possible in traditional approaches, in which there is only partial control over the variables.
+	
 	We have chosen architecture recovery algorithms based on graph clustering that have free and publicly available implementations and that were studied by more than one author in papers about architecture recovery. By this criteria, we have selected the algorithms ACDC \cite{Tzerpos2000}, Bunch \cite{Mancoridis1998}, and hierarchical agglomerative clustering algorithms \cite{Anquetil1999}. For Bunch and ACDC, we used the default configurations from the original implementations provided by their respective creators.
 		
 	In the case of hierarchical algorithms, we have experimented with two linkage criteria---single-linkage (SL) and complete-linkage (CL)--and two height cutoff values---75\% and 90\%. There are, thus, 4 configurations for the hierarchical agglomerative algorithm, that will be referred as SL75, SL90, CL75, and CL90. These are the configurations studied by Anquetil  \cite{Anquetil1999,Anquetil2003} and then reproduced by others (e.g., \cite{Wu2005}).
@@ -643,10 +645,6 @@ Finally, results are discussed in Section~\ref{sec:exp:disc}.
 	
 	In this experiment, all graphs---both software-realistic and non software-realistic---were considered, in order to avoid the software-realism variable to bias the results.
 	% We have analyzed the influence of the number of modules and of the proportion of external edges on the performance of the algorithms. We have chosen these two properties because they map naturally to BCR+ parameters: number of modules is controlled by the input module graph, $G$, and proportion of external edges is controlled by the parameter $\mu$.
-
-%	\TODO Move to experimental setup section?
-In this experiment, an additional setup step was performed, besides those previously described (Section~\ref{sec:exp:setup}).
-Because we have full control over the parameter values, the graphs could be paired and the effect of each parameter could be isolated. For example, let $G$ be a graph in our data set that was synthesized using $\mu = 0.4$ and arbitrary values for the other parameters. There is another graph in the data set, $G\prime$, that was synthesized using the same parameter values as $G$, except for $\mu = 0.6$. Any observed difference between $G$ and $G\prime$ can be solely attributed to $\mu$ and to random effects. It should be noted that such pairing would not be possible in traditional approaches.
 		
 	% As expected, all algorithms performed better when the proportion of external edges was smaller. % I already checked the experimental package and found it to be true
 	
