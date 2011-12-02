@@ -27,6 +27,11 @@ Synthetic Benchmarks for Architecture Recovery Algorithms}
 
 \begin{document}
 
+	\newcommand{\din}[0]{\ensuremath{\delta_{in}}}
+	\newcommand{\dout}[0]{\ensuremath{\delta_{out}}}
+	\newcommand{\gin}[0]{\ensuremath{\mathrm{d}_{in}}}
+	\newcommand{\gout}[0]{\ensuremath{\mathrm{d}_{out}}}
+
 \sloppy
 \maketitle
 
@@ -156,7 +161,8 @@ where $n$ is the number of objects (vertices) in the clustering.
 	Some authors distinguish between networks and graphs, by using the term graph to mean an abstract, formal representation of a network. However, this distinction is not universally accepted, so, for our purposes, graph and network can be used interchangeably.
 
 	\TODO Instead of one paragraph explaining all concepts, may define as they are used.
-	Some concepts from graph theory should be familiar to most readers with computer science background. A graph is a set of vertices and edges, where each vertex represents a relationship between two vertices. An edge can be either directed---meaning that there is an origin and a destination vertices---or undirected---meaning that the relationship between vertices is symmetrical. The degree of a vertex is the number of edges connected to it. The in-degree of a vertex is the number of edges that have the vertex as the destination (ingoing edges) and, similarly, the out-degree of a vertex is the number of edges that have the vertex as the origin (outgoing edges).
+	Some concepts from graph theory should be familiar to most readers with computer science background. A graph is a set of vertices and edges, where each vertex represents a relationship between two vertices. An edge can be either directed---meaning that there is an origin and a destination vertices---or undirected---meaning that the relationship between vertices is symmetrical. The degree of a vertex is the number of edges connected to it. 
+The in-degree of a vertex ($\gin$) is the number of edges that have the vertex as the destination (ingoing edges) and, similarly, the out-degree of a vertex ($\gout$) is the number of edges that have the vertex as the origin (outgoing edges).
 
 \begin{subsubsection}{Degree Distribution}
 	One of the main results in network theory refers to the distribution of vertex degrees in commonly studied domains. Previously, it was believed that, in most domains, %the interconnection of objects was normally distributed (or formally, that 
@@ -386,26 +392,29 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{section}{The BCR+ Model}	\label{sec:bcr}
-	\newcommand{\din}[0]{\ensuremath{\delta_{in}}}
-	\newcommand{\dout}[0]{\ensuremath{\delta_{out}}}
-	\newcommand{\gin}[0]{\ensuremath{\mathrm{d}_{in}}}
-	\newcommand{\gout}[0]{\ensuremath{\mathrm{d}_{out}}}
 	
-	In this section, we describe the BCR+ model for synthesizing graphs from a description of the module viewpoint of an arbitrary architecture --- that is, the modules and dependencies between modules. The BCR+ model produces---by means of the mechanisms of growth and preferential attachment---directed graphs that are both scale-free and segmented in modules.
+\begin{figure*}[tbp]
+	\centering
+		\includegraphics[scale=1]{figures/bcr-initial-graph}
+	\caption{Initial graph synthesized by BCR+, given an input graph parameter $G$.}
+	\label{fig:bcr-initial-graph}
+\end{figure*}	
+	
+	In this section, we describe the BCR+ model for synthesizing graphs from a description of the module viewpoint of an arbitrary architecture --- that is, the modules and dependencies between modules. The BCR+ model produces---by means of the mechanisms of growth and \textit{preferential attachment}---directed graphs that are both scale-free and segmented in modules. EXPLICAR  preferential attachment?
 	
 	\TODO as far as we know it is the only graph model that takes module dependencies as input.
 	
 	Then, we evaluate graphs synthesized by BCR+ using the previously described software-realism classifier. We conclude that BCR+ is able to synthesize software-realistic graphs, indistinguishable from software dependency graphs. \TODO we should also argue in favor of its software-realism by saying that it produces scale-free graphs.
 	
-	\TODO there are other models, but they don't take architecture as input	
+	\TODO there are other models, but they don't take architecture as input.
 	
 \begin{subsection}{Overview}
-	The BCR+ model is a generalization of a graph model proposed by Bollobás et al \cite{Bollobas2003}. The original model generates directed graphs that are scale-free. Our model extends the original by generating graphs in which the nodes are organized in modules, according to an modular architecture given as input.
+	The BCR+ model is a graph model that generates directed graphs that are scale-free, in which the nodes are organized in modules, according to an modular architecture given as input.
+The BCR+ model is a generalization of the graph model proposed by Bollobás et al \cite{Bollobas2003}. 
 	
 	\TODO BCR+ is a growth model, can simulate the evolution of a software system subject to constraints in module interaction. See CSMR paper (extended version), pg 2, col 2, just before section B. 
 	
-	The BCR+ model takes the following parameters as input:
-	
+	The BCR+ model takes the following parameters as input: 
 	\begin{itemize}
   \item number of vertices, $n$;
   \item three probability values, $p_1$, $p_2$ e $p_3$, com $p_1 + p_2 + p_3 = 1$;
@@ -414,9 +423,8 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
   \item an directed graph representing dependencies between modules, $G$;
   \item a constant, $\mu$, with $0.0 \le \mu \le 1.0$;
   \end{itemize}
+  The last two parameters---$G$ and  $\mu$---are new, introduced by the BCR+ model. The other ones are from the original model by Bollobás et al \cite{Bollobas2003}.
   
-	The last two parameters are new in BCR+. The other ones are from the original model by Bollobás et al \cite{Bollobas2003}.
-	
 	In the graph $G$, each vertex represents one module of the architecture. Each edge defines a relationship of dependency between modules. We say that a module $M_1$ depends on another module, $M_2$, if $G$ contains an edge from the vertex that represents $M_1$ to the vertex that represents $M_2$. In the graph that is created, an edge from a vertex $v_1 \in M_1$ to another vertex, $v_2 \in M_2$, can be created only if $M_1$ depends on $M_2$ in the graph $G$ or if $M_1$ and $M_2$ are the same module.
 	
 		\TODO Say that these graphs contain both internal and external edges. Define internal/external.
@@ -425,31 +433,23 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 	
 	The original model by Bollobás et al \cite{Bollobas2003} is a particular case of BCR+ when $\mu = 0$ and $G$ contains one single vertex, representing one single module.
 	
-
-\begin{figure*}[htbp]
-	\centering
-		\includegraphics[scale=1]{figures/bcr-initial-graph}
-	\caption{Initial graph synthesized by BCR+, given an input graph parameter $G$.}
-	\label{fig:bcr-initial-graph}
-\end{figure*}
-	
-	As a computer model, BCR+ takes the parameters as inputs and, by running an algorithm, outputs a graph. The algorithm builds the output graph incrementally. It starts by creating a module for each vertex in the input graph $G$, and then adding one vertex to each module. After that, it creates all external edges that are allowed by $G$ (see Figure \ref{fig:bcr-initial-graph}). Then, the graph is modified according to three formation rules that are applied successively, in random order, until the graph grows to $n$ vertices. At each algorithm step, the probability of the $i$-th being applied is given by the parameter $p_i$.
+	As a computer model, BCR+ takes the parameters as inputs and, by running an algorithm, outputs a graph. The algorithm builds the output graph incrementally. It starts by creating a module for each vertex in the input graph $G$, and then adding one vertex to each module. After that, it creates all external edges that are allowed by $G$ (see Figure~\ref{fig:bcr-initial-graph}). Then, the graph is modified according to three formation rules that are applied successively, in random order, until the graph grows to $n$ vertices. At each algorithm step, the probability of the $i$-th being applied is given by the parameter $p_i$.
 
 \end{subsection}	
 
 \begin{subsection}{Formation Rules}
-	
-	There are three formation rules in BCR+. Each one modifies the output graph by adding or removing vertices or edges in the graph. Also, each formation rule has a probability of being applied, given by the parameters $p_1$, $p_2$ and $p_3$.
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
 	\centering
 		\includegraphics[width=0.45\textwidth]{figures/bcr-rules}
 	\caption{Formation rules for BCR+. $M_i$ and $M_j$ are distinct modules, such as $M_i$ depends on $M_j$. In the diagram for each rule, thicker lines represent vertices and edges created when the rule is applied.}
 	\label{fig:bcr-rules}
 \end{figure}
 
-	The rules are illustrated in Figure \ref{fig:bcr-rules}. Simplified rules:
+TALVEZ colocar a FIGURE 4 em 2 colunas, no topo da pagina.
 	
+	There are three formation rules in BCR+. Each one modifies the output graph by adding or removing vertices or edges in the graph. Also, each formation rule has a probability of being applied, given by the parameters $p_1$, $p_2$ and $p_3$.
+The formation rules are illustrated in Figure \ref{fig:bcr-rules} and a simplified description of these rules is provided below:
 	\begin{itemize}
 		\item Rule 1: one vertex is added to some module, together with an outgoing edge to another vertex in the same module.
 		\item Rule 2: one vertex is added to some module, together with an ingoing edge coming from another vertex in the same module.
@@ -471,7 +471,7 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 	
 	The denominator is a normalization factor, such as the sum of probabilities $\mathrm{P}(x)$ is 1.
 	
-	With this definition in mind, the rules can be fully specified:
+	With this definition in mind, the formation rules can be fully specified:
 	
 	\begin{itemize}
 		\item Rule 1: \emph{Add a vertex with an outgoing edge}. An existing vertex, $w$, is chosen according to $\mathrm{f}(x) = \din + \gin(x)$ (that is, parameter $\din$ added to the vertex in-degree). A new vertex, $v$, is added to the module that contains $w$, together with an edge from $v$ to $w$.
@@ -481,14 +481,14 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 		\item Rule 3: \emph{Add an edge between pre-existing vertices}. A vertex, $v$, is chosen according to $\mathrm{f}(x) = \dout + \gout(x)$. Then, an edge is added from $v$ to another vertex, $w$, chosen according to $\mathrm{f}(x) = \din + \gin(x)$. The vertex $w$ is not chosen among the set of all vertices. In fact, there are two rules, and the choice of the rule to apply is probabilistic and depends on the parameter $\mu$:
 
 		\begin{itemize}
-		  \item Rule 3a: with proability $\mu$, $w$ is chosen among the vertices that are in modules on which the module of $v$ depends, according to the parameter $G$.
+		  \item Rule 3a: with probability $\mu$, $w$ is chosen among the vertices that are in modules on which the module of $v$ depends, according to the parameter $G$.
 		  \item Rule 3b: with probability $1 - \mu$, $w$ is chosen among the vertices that are in the same module as $v$.
 		\end{itemize}
 	\end{itemize}
 		
 \end{subsection}
 
-\begin{figure*}[htbp]
+\begin{figure*}[tbp]
 	\centering
 		\includegraphics[width=\textwidth]{figures/bcr-example}
 	\caption{One step of BCR+.}
@@ -497,20 +497,20 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 
 \begin{subsection}{Example} \label{sec:example}
 	
-	To illustrate the behavior of BCR+, we show in Figure \ref{fig:bcr-example} one step of graph synthesis process. Suppose that we chose $G$ to be the four-module graph from Figure \ref{fig:bcr-initial-graph}, so the first step is to create one vertex for each module and then connect them according to the edges in $G$. 
+	To illustrate the behavior of BCR+, we show in Figure \ref{fig:bcr-example} one step of the graph synthesis process. Suppose that $G$ is the four-module graph from Figure \ref{fig:bcr-initial-graph}; the first step is to create one vertex for each module and then connect them according to the edges in $G$. 
 	
 	Now, suppose that $\dout = 2$ and that rule 2 was chosen. In this case, a vertex must be chosen, and this choice must consider, for each vertex, $x$, the value of $\mathrm{f}(x) = \dout + \gout(x)$. In the figure, the value of $\mathrm{f}(x)$ for each vertex is represented by a number inside parentheses near the vertex (the number before the parentheses is simply $\gout(x)$, the out-degree of vertex $x$).
 	
 	Each vertex, $x$, has a probability $\mathrm{P}(x)$ of being chosen, where $\mathrm{P}(x) = \frac{\mathrm{f}(x)}{\sum_i \mathrm{f}(i)}$. In this particular example, $\mathrm{P}(x) = \frac{\mathrm{f}(x)}{11}$, so that the sum of all probability values equals 1.0.
 	
-	The probability values associated with each vertex can be represented by the real line shown in the center of Figure \ref{fig:bcr-example}. Each vertex occupies a segment in the line that is proportional to the probability of it being chosen. The choice of the vertex is made by picking at random a real number between 0.0 and 1.0, marking it in the line and analyzing in which segment it falls. In the example, the value $\frac{5}{11}$ was chosen, which corresponds to a point of the segment of $v_1$ in the line. After the vertex $v_1$ was chosen, rule 2 determines that a new vertex (we can call it $v_4$) is added to $M_1$ (the module that contains $v_1$), together with an edge from the chosen vertex, $v_1$, to newly created vertex, $v_1$.
+	The probability values associated with each vertex can be represented by the real line shown in the center of Figure \ref{fig:bcr-example}. Each vertex occupies a segment in the line that is proportional to the probability of it being chosen. The choice of the vertex is made by picking at random a real number between 0.0 and 1.0, marking it in the line and analyzing in which segment it falls. In the example, the value $\frac{5}{11}$ was chosen, which corresponds to a point of the segment of $v_1$ in the line. After the vertex $v_1$ was chosen, rule 2 determines that a new vertex (we can call it $v_4$) is added to $M_1$ (the module that contains $v_1$), together with an edge from the chosen vertex, $v_1$, to newly created vertex, $v_4$.
 	
 	It should be clear that vertices with high out-degree are more likely to receive new outgoing edges. The parameter $\dout$ can be thought as a base out-degree that is added to all vertices when the probabilities are computed, thus rendering the probability distribution more homogeneous. In the present example, if $\dout$ was zero, vertices $v_2$ and $v_3$ could not be chosen, because both have zero out-degree. Of course, the same reasoning applies to $\din$ and the in-degree.
 
 \end{subsection}
 	
 \begin{subsection}{BCR+ Evaluation}
-	In the previous subsection, we have proposed a graph classifier that determine, with high precision and recall, whether a graph is software-realistic. In this section, we evaluate whether the BCR+ graph model is able to synthesize software-realistic graphs. The evaluation process is divided in three steps:
+	In the previous subsection, we have proposed a graph classifier that determines, with high precision and recall, whether a graph is software-realistic. In this section, we evaluate whether the BCR+ graph model is able to synthesize software-realistic graphs. The evaluation process is divided in three steps:
 	
 	\begin{enumerate}
 		\item \emph{parameter selection}: by varying the values of the parameters of the model, we come to thousands of possible parameter configurations, so to explore the variety of graphs that can be synthesized;
@@ -523,9 +523,9 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 \begin{subsubsection}{Parameter Selection}
 	To synthesize a large variety of graphs, we have varied the value of each parameter from BCR+ so as to cover a wide range of possible values. Each assignment of values to parameters is called a configuration. We have chosen configurations for each possible combination of the selected parameter values.
 		
-	To recap, BCR+ has seven parameters: the number of vertices, $n$; the reference architecture, $G$; three complementary probabilities, $p_1$, $p_2$, and $p_3$; the mixing probability, $\mu$; and nonnegative values $\din$ and $\dout$. The probabilities are bounded parameters, with values ranging from 0.0 to 1.0. The remaining parameters are more complex.
+	To recap, BCR+ has eight parameters: the number of vertices, $n$; the reference architecture, $G$; three complementary probabilities, $p_1$, $p_2$, and $p_3$; the mixing probability, $\mu$; and nonnegative values $\din$ and $\dout$. The probabilities are bounded parameters, with values ranging from 0.0 to 1.0. The remaining parameters are more complex.
 	
-	Because most parameters take real values as input, it is not possible to cover all possible values, so they have been split in discrete intervals. Also, to avoid combinatorial explosion, we have limited the configuration space to at most six values per parameter.
+	Because most parameters take real values as input, it is not possible to cover all possible values, so they have been split into discrete intervals. Also, to avoid combinatorial explosion, we have limited the configuration space to at most six values per parameter.
 	
 	We have fixed the number of vertices, $n$, to 1,000, a value that has been used in related work \cite{Lancichinetti2009b}. To fix the number of vertices should not influence the results, since it affects only the size of the graph, not the pattern of connections between vertices.
 	
@@ -533,7 +533,7 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 	
 	In order to avoid arbitrary graphs for $G$, we have instead used graphs that were extracted from software systems from the data set described in section \ref{sec:data-set}. For this task, we have extracted dependencies for all JAR files bundled with the system, including library files. Then, we have considered that each JAR is a module and that dependencies from entities in one JAR to entities in another JAR represent dependencies between modules. We believe that JAR files are good surrogates to modules, because distinct JAR files usually correspond to the work of distinct development teams.
 	
-	In the end, 5 graphs were chosen as $G$, with sizes from 2 to 32 modules. The graphs were extracted from the following software systems: GEF (2 modules), iBATIS (4 modules), MegaMek (8 modules), findbugs (16 modules), and zk (32 modules).
+	In the end, 5 graphs were chosen as $G$, with sizes from 2 to 32 modules. The graphs were extracted from the following software systems: GEF (2 modules), iBATIS (4 modules), MegaMek (8 modules), findbugs (16 modules), and zk (32 modules). VAI REFERENCIAR?
 	
 	For the parameters $p_1$, $p_2$, and $p_3$, we have chosen values in the set $\{0.0, 0.2, 0.4, 0.6, 0.8, 1.0\}$, such as $p_1 + p_2 + p_3 = 1.0$. Also, we determined that $p_1 + p_2 > 0$, because $p_1$ and $p_2$ correspond to rules that add vertices (otherwise, the graph would not grow in number of vertices).
 	
@@ -548,7 +548,7 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 
 \begin{subsubsection}{Graph Synthesis and Evaluation} \label{sec:bcr-synthesis}
 	
-	For each parameter configuration, three graphs were synthesized, using distinct random seeds for each generation. Therefore, there were 28,500 synthetic graphs. Next, we classified each graph using the previously present graph classifier.
+	For each parameter configuration, three graphs were synthesized, using distinct random seeds for each generation. Therefore, there were 28,500 synthetic graphs. Next, we classified each graph using the software-realism graph classifier (Section~\ref{sec:sr}).
 
 	% , to determine whether at least some of the graphs are software-realistic. We did not expect all graphs to be software-realistic. Because the synthesis process and the graph classification are both fast (less than 1 second on a 2.2 GHz processor, with no code optimizations), we can synthesize a lot of graphs and filter out the ones that are not software-realistic, as long as there are at least some software-realistic graphs.
 	
@@ -569,19 +569,21 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{section}{Evaluation of Architecture Recovery Algorithms}
+\begin{section}{Evaluation of Architecture Recovery Algorithms} \label{sec:eval}
 	\TODO Recap Bunch, ACDC, SL75, SL90, CL75, CL90; MoJo metric; experimental setup for evaluation of architecture recovery algorithms: given a dependency graph and a reference architecture, run the algorithm on the graph and compare the recovered architecture with the reference architecture.
-
-\begin{subsection}{Experimental Setup}
-	With the objective of comparing architecture recovery algorithms and understand the factors that affect their performance (how well they recover the reference architecture), three experiments were performed:
 	
-	\begin{itemize}
-		\item the first one was aimed at comparing the performance of architecture recovery algorithms using the criterion of authoritativeness (how close the recovered architecture is from the reference architecture);
-		\item the second one was aimed at understanding how the performance of the algorithms is affected by graph characteristics;
-		\item the third one was aimed at assessing whether the presence of bidirectional intermodule dependencies poses a challenge to architecture recovery algorithms.
-	\end{itemize}
-	 
-	Because the methods and data used in the three experiments are similar, we describe them together. The experiments consist of the following steps:
+With the objective of comparing these architecture recovery algorithms and understand the factors that affect their performance, i.e., how well they recover the reference architecture, three experiments were performed. Because the methods and data used in the three experiments are similar, we describe them together in  Section~\ref{sec:exp:setup}.
+
+The first experiment was aimed at comparing the performance of architecture recovery algorithms using the criterion of authoritativeness, that is, how close the recovered architecture is from the reference architecture (Section~\ref{sec:exp1}).
+The second one was aimed at understanding how the performance of the algorithms is affected by graph characteristics (Section~\ref{sec:exp2}).
+The third one was aimed at assessing whether the presence of bidirectional intermodule dependencies poses a challenge to architecture recovery algorithms (Section~\ref{sec:exp3}).
+
+Finally, results are discussed in Section~\ref{sec:exp:disc}.
+	
+
+\begin{subsection}{Experimental Setup} \label{sec:exp:setup}
+
+	The three experiments consist of the following steps:
 	
 	\begin{enumerate}
 		\item use BCR+ to synthesize graphs using many different parameter configurations;
@@ -612,7 +614,7 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 	
 \end{subsection}
 
-\begin{subsection}{Comparison of Architecture Recovery Algorithms}
+\begin{subsection}{Comparison of Architecture Recovery Algorithms} \label{sec:exp1}
 	% Section 6.4 from dissertation
 	
 	The first experiment was aimed at comparing the performance of the algorithms when applied software-realistic graphs, measured by the similarity between the clusters found by the algorithms and the modules of the reference architecture.
@@ -637,7 +639,7 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 	
 \end{subsection}	
 
-\begin{subsection}{Influence of the Number of Modules}
+\begin{subsection}{Influence of the Number of Modules} \label{sec:exp2}
 	% Section 6.5 from dissertation
 	
 	In the next experiment, we tried to understand how the algorithms behave on graphs with different number of modules. We were able to control the number of modules by changing the $G$ parameter for the BCR+ model.
@@ -664,7 +666,7 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 	
 \end{subsection}
 
-\begin{subsection}{Impact of Bidirectional Dependencies}
+\begin{subsection}{Impact of Bidirectional Dependencies} \label{sec:exp3}
 	% Section 6.6 from dissertation
 	
 	The third experiment was aimed at measuring the influence of the type of dependency (unidirectional of bidirectional) on the performance of each architecture recovery algorithm. The independent variable is the parameter $G$ from BCR+, that is, the definition of the modules and allowed dependencies between modules.
@@ -715,7 +717,7 @@ $z = 0.09 + 6.67t_1 - 10t_2 - 9.46t_3 + 5.73t_5 + 40.3t_6 + 23.45t_7 -157.7t_{10
 	
 \end{subsection}
 
-\begin{subsection}{Discussion}
+\begin{subsection}{Discussion} \label{sec:exp:disc}
   % TODO: move to a new section
 	We have described three experiments based on the application of architecture recovery algorithms to synthetic graphs created by the model BCR+. The experiments present evidence that this approach is practicable and can be used to find insights about the algorithms that cannot be found with more traditional approaches.
 	
